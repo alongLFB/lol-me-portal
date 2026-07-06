@@ -1,16 +1,16 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
-import { 
-  Download, 
-  BookOpen, 
-  Headset, 
-  Zap, 
-  Trophy, 
-  Gamepad2, 
-  UserPlus, 
-  Table, 
-  AlertCircle, 
+import {
+  Download,
+  BookOpen,
+  Headset,
+  Zap,
+  Trophy,
+  Gamepad2,
+  UserPlus,
+  Table,
+  AlertCircle,
   ExternalLink,
   Swords,
   Search,
@@ -132,7 +132,7 @@ const sections = [
       {
         title: "中东服群友资料录入",
         desc: "新群友请务必在此录入信息，方便大家认识与组队。",
-        link: "https://melol.alonglfb.com/",
+        link: "https://group-melol.alonglfb.com",
         icon: UserPlus,
         color: "text-hextech-blue",
         borderGlow: "group-hover:border-hextech-blue/50",
@@ -159,9 +159,9 @@ export default function Home() {
       <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-lol-gold/5 blur-[120px] pointer-events-none" />
 
       <div className="max-w-5xl mx-auto px-6 py-12 md:py-20 relative z-10">
-        
+
         {/* Header Section */}
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -176,9 +176,9 @@ export default function Home() {
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
             汇聚中东服华人群友，<span className="text-hextech-blue font-medium">一站式</span>开黑工具与数据看板。
           </p>
-          
+
           {/* Alert Box */}
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -189,7 +189,7 @@ export default function Home() {
             <div>
               <h3 className="font-semibold text-slate-100 mb-1">群友行动指引</h3>
               <p className="text-sm md:text-base text-slate-300">
-                提醒进群后将群昵称修改为：<strong className="text-hextech-blue">“游戏ID#后缀 + 段位 + 主玩位置”</strong><br/>
+                提醒进群后将群昵称修改为：<strong className="text-hextech-blue">“游戏ID#后缀 + 段位 + 主玩位置”</strong><br />
                 <span className="text-slate-400 text-sm mt-1 inline-block">（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。</span>
               </p>
             </div>
@@ -197,7 +197,7 @@ export default function Home() {
         </motion.header>
 
         {/* Content Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -209,7 +209,7 @@ export default function Home() {
                 <span className="w-8 h-[2px] bg-gradient-to-r from-lol-gold to-transparent mr-3" />
                 {section.title}
               </h2>
-              
+
               <div className={`grid grid-cols-1 ${section.fullWidth ? 'md:grid-cols-2' : ''} gap-4`}>
                 {section.items.map((item, itemIdx) => (
                   <motion.a
@@ -228,14 +228,14 @@ export default function Home() {
                   >
                     {/* Hover Gradient Overlay */}
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    
+
                     <div className="flex items-start justify-between mb-4 relative z-10">
                       <div className={`p-3 rounded-xl bg-white/5 border border-white/10 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
                         <item.icon className="w-6 h-6 md:w-7 md:h-7" />
                       </div>
                       <ExternalLink className="w-5 h-5 text-slate-500 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
                     </div>
-                    
+
                     <div className="relative z-10">
                       <h3 className="text-lg font-semibold text-slate-100 group-hover:text-white transition-colors mb-2">
                         {item.title}
@@ -250,9 +250,9 @@ export default function Home() {
             </div>
           ))}
         </motion.div>
-        
+
         {/* Footer */}
-        <motion.footer 
+        <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
