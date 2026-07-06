@@ -12,7 +12,9 @@ import {
   Table, 
   AlertCircle, 
   ExternalLink,
-  Swords
+  Swords,
+  Search,
+  Activity
 } from 'lucide-react';
 
 // Animation variants
@@ -97,6 +99,29 @@ const sections = [
         color: "text-amber-400",
         borderGlow: "group-hover:border-amber-400/50",
         shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)]"
+      }
+    ]
+  },
+  {
+    title: "战绩查询与数据评估",
+    items: [
+      {
+        title: "OP.GG 战绩查询",
+        desc: "全球最权威的英雄联盟玩家战绩、英雄数据查询平台。",
+        link: "https://op.gg/zh-cn",
+        icon: Search,
+        color: "text-blue-400",
+        borderGlow: "group-hover:border-blue-400/50",
+        shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(96,165,250,0.3)]"
+      },
+      {
+        title: "玩家价值评估",
+        desc: "输入游戏 ID 快速评估玩家真实表现与价值。",
+        link: "https://loleval.alonglfb.com/zh",
+        icon: Activity,
+        color: "text-purple-400",
+        borderGlow: "group-hover:border-purple-400/50",
+        shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(192,132,252,0.3)]"
       }
     ]
   },
