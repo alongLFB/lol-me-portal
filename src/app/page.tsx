@@ -14,7 +14,8 @@ import {
   ExternalLink,
   Swords,
   Search,
-  Activity
+  Activity,
+  Eye
 } from 'lucide-react';
 
 // Animation variants
@@ -83,13 +84,22 @@ const sections = [
     title: "游戏上分神器",
     items: [
       {
-        title: "HyperBoost Reveal",
+        title: "League Akari",
         desc: "LOL 自动接收对局 + 选人阶段查看队友 ID 避坑神器。",
-        link: "https://hyperboost.gg/reveal",
+        link: "https://leagueakari.github.io/",
         icon: Trophy,
         color: "text-red-400",
         borderGlow: "group-hover:border-red-400/50",
         shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(248,113,113,0.3)]"
+      },
+      {
+        title: "Lobby Reveal",
+        desc: "另一款功能强大的选人阶段查看队友 ID 避坑工具。",
+        link: "https://lobbyreveal.app/",
+        icon: Eye,
+        color: "text-purple-400",
+        borderGlow: "group-hover:border-purple-400/50",
+        shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]"
       },
       {
         title: "黄金之路网页小游戏",
