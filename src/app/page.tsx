@@ -125,8 +125,8 @@ const sections = [
         shadowGlow: "group-hover:shadow-[0_0_30px_-5px_rgba(96,165,250,0.3)]"
       },
       {
-        title: "玩家价值评估",
-        desc: "输入游戏 ID 快速评估玩家真实表现与价值。",
+        title: "AI 召唤师神谕",
+        desc: "输入你的 Riot ID，让虚空枢纽的 AI 为你的近期战绩给出最毒舌或最激情的裁决。",
         link: "https://loleval.alonglfb.com/zh",
         icon: Activity,
         color: "text-purple-400",
