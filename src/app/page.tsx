@@ -192,17 +192,17 @@ export default function Home() {
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-8 mx-auto max-w-3xl bg-hextech-dark/10 border border-hextech-blue/30 rounded-xl p-4 md:p-5 flex items-start text-left backdrop-blur-md shadow-[0_0_20px_rgba(10,200,185,0.1)] relative overflow-hidden"
+            className="mt-8 mx-auto max-w-3xl bg-hextech-dark/10 border border-hextech-blue/30 rounded-xl p-4 md:p-5 flex flex-col items-center text-center backdrop-blur-md shadow-[0_0_20px_rgba(10,200,185,0.1)] relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-1 h-full bg-hextech-blue" />
-            <AlertCircle className="w-6 h-6 text-hextech-blue shrink-0 mt-0.5 mr-3" />
-            <div>
-              <h3 className="font-semibold text-slate-100 mb-1">群友行动指引</h3>
-              <p className="text-sm md:text-base text-slate-300">
-                提醒进群后将群昵称修改为：<strong className="text-hextech-blue">“游戏ID#后缀 + 段位 + 主玩位置”</strong><br />
-                <span className="text-slate-400 text-sm mt-1 inline-block">（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。</span>
-              </p>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-hextech-blue to-transparent" />
+            <div className="flex items-center justify-center mb-2">
+              <AlertCircle className="w-6 h-6 text-hextech-blue mr-2" />
+              <h3 className="font-semibold text-slate-100 text-lg">群友行动指引</h3>
             </div>
+            <p className="text-sm md:text-base text-slate-300">
+              提醒进群后将群昵称修改为：<strong className="text-hextech-blue">“游戏ID#后缀 + 段位 + 主玩位置”</strong><br />
+              <span className="text-slate-400 text-sm mt-2 inline-block">（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。</span>
+            </p>
           </motion.div>
         </motion.header>
 
@@ -211,54 +211,65 @@ export default function Home() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12"
+          className="flex flex-col space-y-12 md:space-y-16"
         >
-          {sections.map((section, idx) => (
-            <div key={idx} className={`space-y-4 ${section.fullWidth ? 'md:col-span-2' : ''}`}>
-              <h2 className="text-xl font-bold text-slate-100 flex items-center mb-6">
-                <span className="w-8 h-[2px] bg-gradient-to-r from-lol-gold to-transparent mr-3" />
-                {section.title}
-              </h2>
+          {sections.map((section, idx) => {
+            // 根据每一块包含的项目数量，动态决定列数（2项为2列，3项为3列），实现完美对称
+            const gridCols = section.items.length === 3 
+              ? 'grid-cols-1 md:grid-cols-3' 
+              : 'grid-cols-1 md:grid-cols-2';
 
-              <div className={`grid grid-cols-1 ${section.fullWidth ? 'md:grid-cols-2' : ''} gap-4`}>
-                {section.items.map((item, itemIdx) => (
-                  <motion.a
-                    key={itemIdx}
-                    variants={itemVariants}
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`
-                      group relative flex flex-col p-5 md:p-6 rounded-2xl 
-                      bg-slate-900/40 backdrop-blur-md border border-white/5 
-                      transition-all duration-300 ease-out
-                      hover:-translate-y-1 ${item.borderGlow} ${item.shadowGlow}
-                      ${'featured' in item && item.featured ? 'bg-gradient-to-br from-[#5865F2]/10 to-transparent border-[#5865F2]/20' : ''}
-                    `}
-                  >
-                    {/* Hover Gradient Overlay */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            return (
+              <div key={idx} className="space-y-6">
+                {/* 居中对称的标题 */}
+                <h2 className="text-xl md:text-2xl font-bold text-slate-100 flex items-center justify-center">
+                  <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-lol-gold mr-4 opacity-70" />
+                  {section.title}
+                  <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-lol-gold ml-4 opacity-70" />
+                </h2>
 
-                    <div className="flex items-start justify-between mb-4 relative z-10">
-                      <div className={`p-3 rounded-xl bg-white/5 border border-white/10 ${item.color} group-hover:scale-110 transition-transform duration-300`}>
-                        <item.icon className="w-6 h-6 md:w-7 md:h-7" />
+                <div className={`grid ${gridCols} gap-4 md:gap-6`}>
+                  {section.items.map((item, itemIdx) => (
+                    <motion.a
+                      key={itemIdx}
+                      variants={itemVariants}
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`
+                        group relative flex flex-col items-center text-center p-6 md:p-8 rounded-2xl 
+                        bg-slate-900/40 backdrop-blur-md border border-white/5 
+                        transition-all duration-300 ease-out
+                        hover:-translate-y-1 ${item.borderGlow} ${item.shadowGlow}
+                        ${'featured' in item && item.featured ? 'bg-gradient-to-br from-[#5865F2]/10 to-transparent border-[#5865F2]/20' : ''}
+                      `}
+                    >
+                      {/* Hover Gradient Overlay */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      
+                      {/* External Link Icon (Top Right) */}
+                      <ExternalLink className="absolute top-5 right-5 w-5 h-5 text-slate-500 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300 z-20" />
+
+                      {/* 居中的图标 */}
+                      <div className={`p-4 rounded-2xl bg-white/5 border border-white/10 ${item.color} group-hover:scale-110 transition-transform duration-300 mb-5 relative z-10`}>
+                        <item.icon className="w-8 h-8 md:w-10 md:h-10" />
                       </div>
-                      <ExternalLink className="w-5 h-5 text-slate-500 opacity-0 -translate-x-2 translate-y-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-300" />
-                    </div>
 
-                    <div className="relative z-10">
-                      <h3 className="text-lg font-semibold text-slate-100 group-hover:text-white transition-colors mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors line-clamp-2">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </motion.a>
-                ))}
+                      {/* 居中的文字 */}
+                      <div className="relative z-10 flex-1 flex flex-col">
+                        <h3 className="text-lg md:text-xl font-bold text-slate-100 group-hover:text-white transition-colors mb-3">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </motion.a>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </motion.div>
 
         {/* Footer */}
