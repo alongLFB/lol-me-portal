@@ -101,7 +101,7 @@
     "title": "LOL 中东服门户 · 管理后台登录",
     "subtitle": "请输入密码进入全站配置系统",
     "password_label": "管理员登录密钥",
-    "password_placeholder": "请输入 ADMIN_PASSWORD...",
+    "password_placeholder": "请输入管理员登录密码...",
     "submit_btn": "安全验证并登录",
     "submitting": "安全校验中...",
     "success": "登录成功！正在跳转...",

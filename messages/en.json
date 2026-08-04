@@ -101,7 +101,7 @@
     "title": "LOL ME Portal · Admin Login",
     "subtitle": "Please enter access key to enter management panel",
     "password_label": "Admin Access Key",
-    "password_placeholder": "Enter ADMIN_PASSWORD...",
+    "password_placeholder": "Enter admin password...",
     "submit_btn": "Authenticate & Log In",
     "submitting": "Verifying...",
     "success": "Authentication successful! Redirecting...",
