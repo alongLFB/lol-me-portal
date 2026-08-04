@@ -13,12 +13,12 @@ const messagesMap = {
 
 interface I18nContextType {
   locale: "zh" | "en";
-  switchLocale: (targetLocale: "zh" | "en") => void;
+  setLocale: (locale: "zh" | "en") => void;
 }
 
 const I18nContext = createContext<I18nContextType>({
   locale: "zh",
-  switchLocale: () => {},
+  setLocale: () => {},
 });
 
 export function useI18n() {
@@ -42,32 +42,14 @@ export function I18nProvider({
         setTimeZone(userTimeZone);
       }
     } catch {
-      // Fallback to default
+      // Fallback
     }
   }, []);
-
-  const switchLocale = (targetLocale: "zh" | "en") => {
-    setLocale(targetLocale);
-
-    if (typeof window !== "undefined") {
-      const currentPath = window.location.pathname;
-      let newPath = currentPath;
-      if (currentPath.startsWith("/zh")) {
-        newPath = currentPath.replace(/^\/zh/, `/${targetLocale}`);
-      } else if (currentPath.startsWith("/en")) {
-        newPath = currentPath.replace(/^\/en/, `/${targetLocale}`);
-      } else {
-        const cleanPath = currentPath.startsWith("/") ? currentPath : `/${currentPath}`;
-        newPath = `/${targetLocale}${cleanPath}`;
-      }
-      window.history.replaceState(null, "", newPath);
-    }
-  };
 
   const messages = messagesMap[locale] || zhMessages;
 
   return (
-    <I18nContext.Provider value={{ locale, switchLocale }}>
+    <I18nContext.Provider value={{ locale, setLocale }}>
       <NextIntlClientProvider messages={messages} locale={locale} timeZone={timeZone}>
         {children}
       </NextIntlClientProvider>
