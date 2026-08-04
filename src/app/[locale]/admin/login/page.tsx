@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
+    <main className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-300">
       {/* Background Decorators */}
       <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-hextech-blue/10 blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-lol-gold/5 blur-[100px] pointer-events-none" />
@@ -54,21 +54,21 @@ export default function AdminLoginPage() {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md bg-slate-900/80 border border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-8 relative z-10">
+      <div className="w-full max-w-md bg-white/90 border border-slate-200/80 dark:bg-slate-900/80 dark:border-white/10 rounded-3xl p-8 backdrop-blur-xl shadow-2xl space-y-8 relative z-10 transition-colors duration-300">
         <div className="text-center space-y-3">
           <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-hextech-blue/10 border border-hextech-blue/30 text-hextech-blue mb-2">
             <ShieldCheck className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-white">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
             {tLogin("title")}
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             {tLogin("subtitle")}
           </p>
         </div>
 
         {error && (
-          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center shadow-lg">
+          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-xs flex items-center shadow-lg">
             <AlertCircle className="w-4 h-4 mr-2 shrink-0" />
             <span>{error}</span>
           </div>
@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               {tLogin("password_label")}
             </label>
             <div className="relative">
@@ -86,16 +86,16 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={tLogin("password_placeholder")}
-                className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-950/80 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm transition-all"
+                className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/80 dark:border-white/10 dark:text-white dark:placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm transition-all shadow-sm"
               />
-              <Lock className="w-4 h-4 text-slate-500 absolute left-4 top-4" />
+              <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-4 top-4" />
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-hextech-blue hover:bg-hextech-blue/90 text-slate-950 font-bold text-sm transition-all flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(10,200,185,0.3)] disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-hextech-blue hover:bg-hextech-blue/90 text-slate-950 font-bold text-sm transition-all flex items-center justify-center space-x-2 shadow-[0_0_20px_rgba(10,200,185,0.3)] disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <>
@@ -114,7 +114,7 @@ export default function AdminLoginPage() {
         <div className="text-center pt-2">
           <a
             href={`/${locale}`}
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
           >
             ← 返回前台 Portal
           </a>

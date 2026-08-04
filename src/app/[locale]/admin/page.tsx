@@ -383,7 +383,7 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-300">
+      <div className="min-h-screen flex items-center justify-center text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
         <Loader2 className="w-8 h-8 animate-spin text-hextech-blue mr-3" />
         <span>管理后台加载中...</span>
       </div>
@@ -391,18 +391,18 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-8 relative">
+    <main className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 p-4 md:p-8 relative transition-colors duration-300">
       <div className="max-w-6xl mx-auto space-y-8">
         
         {/* Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-slate-900/60 border border-white/10 backdrop-blur-xl">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white/90 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 backdrop-blur-xl shadow-md transition-colors">
           <div className="flex items-center space-x-3">
             <div className="p-3 rounded-xl bg-hextech-blue/10 border border-hextech-blue/30 text-hextech-blue">
               <LayoutDashboard className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">{tAdmin("dashboard_title")}</h1>
-              <p className="text-xs text-slate-400">{tAdmin("dashboard_subtitle")}</p>
+              <h1 className="text-xl font-bold text-slate-900 dark:text-white">{tAdmin("dashboard_title")}</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{tAdmin("dashboard_subtitle")}</p>
             </div>
           </div>
 
@@ -412,14 +412,14 @@ export default function AdminDashboardPage() {
             <a
               href={`/${locale}`}
               target="_blank"
-              className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-slate-300 transition-colors inline-flex items-center"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 dark:bg-white/5 dark:border-white/10 dark:hover:bg-white/10 dark:text-slate-300 text-xs font-medium transition-colors inline-flex items-center"
             >
               <Eye className="w-4 h-4 mr-1.5" />
               {tAdmin("preview_site")}
             </a>
             <button
               onClick={handleLogout}
-              className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-xs font-medium text-red-400 transition-colors inline-flex items-center"
+              className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-xs font-medium text-red-500 dark:text-red-400 transition-colors inline-flex items-center cursor-pointer"
             >
               <LogOut className="w-4 h-4 mr-1.5" />
               {tAdmin("logout")}
@@ -446,13 +446,13 @@ export default function AdminDashboardPage() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="flex border-b border-white/10 gap-2">
+        <div className="flex border-b border-slate-200 dark:border-white/10 gap-2">
           <button
             onClick={() => setActiveTab("settings")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x ${
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x cursor-pointer ${
               activeTab === "settings"
-                ? "bg-slate-900 border-white/10 text-hextech-blue"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-white border-slate-200/80 text-hextech-blue dark:bg-slate-900 dark:border-white/10 font-bold"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Settings className="w-4 h-4 mr-2" />
@@ -460,10 +460,10 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("sections")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x ${
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x cursor-pointer ${
               activeTab === "sections"
-                ? "bg-slate-900 border-white/10 text-hextech-blue"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-white border-slate-200/80 text-hextech-blue dark:bg-slate-900 dark:border-white/10 font-bold"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <FolderKanban className="w-4 h-4 mr-2" />
@@ -471,10 +471,10 @@ export default function AdminDashboardPage() {
           </button>
           <button
             onClick={() => setActiveTab("items")}
-            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x ${
+            className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x cursor-pointer ${
               activeTab === "items"
-                ? "bg-slate-900 border-white/10 text-hextech-blue"
-                : "border-transparent text-slate-400 hover:text-slate-200"
+                ? "bg-white border-slate-200/80 text-hextech-blue dark:bg-slate-900 dark:border-white/10 font-bold"
+                : "border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <Layers className="w-4 h-4 mr-2" />
@@ -484,8 +484,8 @@ export default function AdminDashboardPage() {
 
         {/* TAB 1: SITE SETTINGS */}
         {activeTab === "settings" && (
-          <div className="bg-slate-900/60 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center">
+          <div className="bg-white/90 border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-md space-y-6 transition-colors">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center">
               <Sparkles className="w-5 h-5 text-hextech-blue mr-2" />
               {tAdmin("settings.card_title")}
             </h2>
@@ -493,14 +493,14 @@ export default function AdminDashboardPage() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     {tAdmin("settings.header_title")}
                   </label>
                   <input
                     type="text"
                     value={settings.header_title}
                     onChange={(e) => setSettings({ ...settings, header_title: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
                 <div>
@@ -513,21 +513,21 @@ export default function AdminDashboardPage() {
                     value={settings.header_title_en}
                     onChange={(e) => setSettings({ ...settings, header_title_en: e.target.value })}
                     placeholder="LOL Middle East Community Portal"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     {tAdmin("settings.header_subtitle")}
                   </label>
-                  <input
-                    type="text"
+                  <textarea
+                    rows={3}
                     value={settings.header_subtitle}
                     onChange={(e) => setSettings({ ...settings, header_subtitle: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
                 <div>
@@ -535,26 +535,26 @@ export default function AdminDashboardPage() {
                     <Globe className="w-3.5 h-3.5 mr-1" />
                     {tAdmin("settings.header_subtitle_en")}
                   </label>
-                  <input
-                    type="text"
+                  <textarea
+                    rows={3}
                     value={settings.header_subtitle_en}
                     onChange={(e) => setSettings({ ...settings, header_subtitle_en: e.target.value })}
-                    placeholder="Hub for League of Legends ME Server Chinese Community."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    placeholder="Hub for League of Legends ME Server Chinese Community. Tools & Leaderboards."
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     {tAdmin("settings.alert_title")}
                   </label>
                   <input
                     type="text"
                     value={settings.alert_title}
                     onChange={(e) => setSettings({ ...settings, alert_title: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
                 <div>
@@ -567,21 +567,21 @@ export default function AdminDashboardPage() {
                     value={settings.alert_title_en}
                     onChange={(e) => setSettings({ ...settings, alert_title_en: e.target.value })}
                     placeholder="Community Action Guide"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     {tAdmin("settings.alert_content")}
                   </label>
                   <textarea
                     rows={3}
                     value={settings.alert_content}
                     onChange={(e) => setSettings({ ...settings, alert_content: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
                 <div>
@@ -594,21 +594,21 @@ export default function AdminDashboardPage() {
                     value={settings.alert_content_en}
                     onChange={(e) => setSettings({ ...settings, alert_content_en: e.target.value })}
                     placeholder="Please change your group nickname to: Riot ID#Tag - Rank - Main Position"
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                     {tAdmin("settings.footer_copyright")}
                   </label>
                   <input
                     type="text"
                     value={settings.footer_copyright}
                     onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
                 <div>
@@ -621,7 +621,7 @@ export default function AdminDashboardPage() {
                     value={settings.footer_copyright_en}
                     onChange={(e) => setSettings({ ...settings, footer_copyright_en: e.target.value })}
                     placeholder="© 2026 LOL ME Chinese Community. GLHF."
-                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                    className="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950/60 dark:border-white/10 dark:text-white focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
                   />
                 </div>
               </div>
@@ -662,8 +662,13 @@ export default function AdminDashboardPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center space-x-3">
-                      <span className="font-bold text-white text-base">{sec.title}</span>
-                      {sec.title_en && (
+                      <span className="font-bold text-white text-base">
+                        {locale === "en" ? sec.title_en || sec.title : sec.title}
+                      </span>
+                      {locale === "en" && sec.title && sec.title_en && (
+                        <span className="text-xs text-slate-400 font-mono">({sec.title})</span>
+                      )}
+                      {locale !== "en" && sec.title_en && (
                         <span className="text-xs text-hextech-blue font-mono">({sec.title_en})</span>
                       )}
                       {sec.full_width && (
@@ -761,8 +766,11 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                           <h3 className="font-bold text-white text-base flex items-center space-x-2">
-                            <span>{item.title}</span>
-                            {item.title_en && (
+                            <span>{locale === "en" ? item.title_en || item.title : item.title}</span>
+                            {locale === "en" && item.title && item.title_en && (
+                              <span className="text-xs text-slate-400 font-normal">({item.title})</span>
+                            )}
+                            {locale !== "en" && item.title_en && (
                               <span className="text-xs text-hextech-blue font-normal">({item.title_en})</span>
                             )}
                           </h3>
@@ -777,8 +785,15 @@ export default function AdminDashboardPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mb-1">{item.desc}</p>
-                    {item.desc_en && <p className="text-xs text-hextech-blue/80 italic mb-3">EN: {item.desc_en}</p>}
+                    <p className="text-xs text-slate-400 mb-1">
+                      {locale === "en" ? item.desc_en || item.desc : item.desc}
+                    </p>
+                    {locale === "en" && item.desc && item.desc_en && (
+                      <p className="text-xs text-slate-500 italic mb-3">ZH: {item.desc}</p>
+                    )}
+                    {locale !== "en" && item.desc_en && (
+                      <p className="text-xs text-hextech-blue/80 italic mb-3">EN: {item.desc_en}</p>
+                    )}
                     <a
                       href={item.link}
                       target="_blank"
@@ -820,20 +835,20 @@ export default function AdminDashboardPage() {
 
       {/* SECTION MODAL */}
       {sectionModalOpen && editingSection && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-md space-y-6">
-            <h3 className="text-lg font-bold text-white">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-white/10 rounded-2xl p-6 w-full max-w-md space-y-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               {editingSection.id ? tAdmin("sections.modal_edit") : tAdmin("sections.modal_add")}
             </h3>
             <form onSubmit={handleSaveSection} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.title_zh")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("sections.title_zh")}</label>
                 <input
                   type="text"
                   required
                   value={editingSection.title || ""}
                   onChange={(e) => setEditingSection({ ...editingSection, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
@@ -847,19 +862,19 @@ export default function AdminDashboardPage() {
                   value={editingSection.title_en || ""}
                   onChange={(e) => setEditingSection({ ...editingSection, title_en: e.target.value })}
                   placeholder="e.g. Beginner & Game Client"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
                 <input
                   type="number"
                   value={editingSection.sort_order ?? 0}
                   onChange={(e) =>
                     setEditingSection({ ...editingSection, sort_order: Number(e.target.value) })
                   }
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
@@ -871,18 +886,18 @@ export default function AdminDashboardPage() {
                   onChange={(e) =>
                     setEditingSection({ ...editingSection, full_width: e.target.checked })
                   }
-                  className="rounded border-white/10 bg-slate-950 text-hextech-blue focus:ring-0"
+                  className="rounded border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-slate-950 text-hextech-blue focus:ring-0"
                 />
-                <label htmlFor="full_width" className="text-sm text-slate-300">
+                <label htmlFor="full_width" className="text-sm text-slate-700 dark:text-slate-300">
                   {tAdmin("sections.full_width")}
                 </label>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setSectionModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-white/5 text-slate-300 text-xs font-medium"
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium"
                 >
                   {tAdmin("sections.cancel")}
                 </button>
