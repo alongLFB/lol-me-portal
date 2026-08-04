@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import * as Icons from "lucide-react";
 import {
   LayoutDashboard,
   Settings,
@@ -12,7 +13,6 @@ import {
   Edit2,
   Save,
   LogOut,
-  ArrowLeft,
   CheckCircle2,
   AlertCircle,
   Loader2,
@@ -41,6 +41,41 @@ interface ItemData {
   shadow_glow: string;
   featured: boolean;
   sort_order: number;
+}
+
+const COMMON_ICONS = [
+  "Download",
+  "BookOpen",
+  "Headset",
+  "Zap",
+  "Trophy",
+  "Eye",
+  "Gamepad2",
+  "Search",
+  "Activity",
+  "UserPlus",
+  "Table",
+  "ExternalLink",
+  "Globe",
+  "ShieldCheck",
+  "Sparkles",
+  "Share2",
+  "MessageSquare",
+  "HelpCircle",
+  "Info",
+  "Folder",
+  "Link",
+  "Flame",
+  "Star",
+  "Heart",
+  "Code",
+  "Terminal",
+];
+
+function DynamicIcon({ name, className }: { name: string; className?: string }) {
+  const IconComponent =
+    ((Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>)[name] || Icons.ExternalLink;
+  return <IconComponent className={className} />;
 }
 
 export default function AdminDashboardPage() {
@@ -210,7 +245,6 @@ export default function AdminDashboardPage() {
 
       if (res.ok) {
         showMessage("success", isEdit ? "卡片更新成功" : "卡片新建成功");
-        setItemModalOpen(false);
         setItemModalOpen(false);
         if (selectedSectionId) fetchItems(selectedSectionId);
       } else {
@@ -514,10 +548,17 @@ export default function AdminDashboardPage() {
                   className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col justify-between space-y-4"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-sm font-semibold ${item.color}`}>{item.icon}</span>
-                        <h3 className="font-bold text-white">{item.title}</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 ${item.color} flex items-center justify-center shrink-0`}>
+                          <DynamicIcon name={item.icon} className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-white text-base">{item.title}</h3>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            图标: <code className="text-hextech-blue">{item.icon}</code>
+                          </span>
+                        </div>
                       </div>
                       {item.featured && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-hextech-blue/20 text-hextech-blue border border-hextech-blue/30">
@@ -689,27 +730,65 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs text-slate-400 mb-1">Lucide 图标名</label>
-                  <input
-                    type="text"
-                    value={editingItem.icon || "ExternalLink"}
-                    onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
-                    placeholder="Download / Trophy / Search ..."
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
-                  />
+              {/* Icon & Color Selector with Live Preview */}
+              <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-300">
+                    Lucide 图标设置与实时预览
+                  </label>
+                  {/* Live SVG Preview Badge */}
+                  <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-white/10">
+                    <span className="text-[11px] text-slate-400">预览:</span>
+                    <div className={editingItem.color || "text-hextech-blue"}>
+                      <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
+                    </div>
+                  </div>
                 </div>
 
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">图标名称 (Icon Name)</label>
+                    <input
+                      type="text"
+                      value={editingItem.icon || "ExternalLink"}
+                      onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
+                      placeholder="Download / Trophy ..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-slate-400 mb-1">图标颜色 Class</label>
+                    <input
+                      type="text"
+                      value={editingItem.color || "text-hextech-blue"}
+                      onChange={(e) => setEditingItem({ ...editingItem, color: e.target.value })}
+                      placeholder="text-hextech-blue / text-lol-gold"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Icon Selector Buttons */}
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">图标颜色 Class</label>
-                  <input
-                    type="text"
-                    value={editingItem.color || "text-hextech-blue"}
-                    onChange={(e) => setEditingItem({ ...editingItem, color: e.target.value })}
-                    placeholder="text-hextech-blue / text-lol-gold"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
-                  />
+                  <span className="block text-[11px] text-slate-400 mb-2">常用图标一键选择：</span>
+                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1">
+                    {COMMON_ICONS.map((iconName) => (
+                      <button
+                        key={iconName}
+                        type="button"
+                        onClick={() => setEditingItem({ ...editingItem, icon: iconName })}
+                        className={`px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border transition-all ${
+                          editingItem.icon === iconName
+                            ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold"
+                            : "bg-slate-900/80 border-white/5 text-slate-400 hover:text-white hover:border-white/20"
+                        }`}
+                      >
+                        <DynamicIcon name={iconName} className="w-3.5 h-3.5" />
+                        <span>{iconName}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
