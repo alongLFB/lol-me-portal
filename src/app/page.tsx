@@ -46,9 +46,26 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
 };
 
+function getIconComponent(name: string) {
+  if (!name || !name.trim()) return ExternalLink;
+
+  const iconsMap = (Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>;
+  const trimmed = name.trim();
+
+  if (iconsMap[trimmed]) return iconsMap[trimmed];
+
+  const pascalName = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+  if (iconsMap[pascalName]) return iconsMap[pascalName];
+
+  const lowerName = trimmed.toLowerCase();
+  const foundKey = Object.keys(iconsMap).find((k) => k.toLowerCase() === lowerName);
+  if (foundKey && iconsMap[foundKey]) return iconsMap[foundKey];
+
+  return ExternalLink;
+}
+
 function DynamicIcon({ name, className }: { name: string; className?: string }) {
-  const IconComponent =
-    ((Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>)[name] || ExternalLink;
+  const IconComponent = getIconComponent(name);
   return <IconComponent className={className} />;
 }
 

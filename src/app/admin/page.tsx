@@ -56,6 +56,7 @@ const COMMON_ICONS = [
   "UserPlus",
   "Table",
   "ExternalLink",
+  "Droplet",
   "Globe",
   "ShieldCheck",
   "Sparkles",
@@ -72,9 +73,30 @@ const COMMON_ICONS = [
   "Terminal",
 ];
 
+// Smart Lucide Icon resolution with case-insensitive and PascalCase matching
+function getIconComponent(name: string) {
+  if (!name || !name.trim()) return Icons.ExternalLink;
+
+  const iconsMap = (Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>;
+  const trimmed = name.trim();
+
+  // 1. Exact match (e.g. "Droplet")
+  if (iconsMap[trimmed]) return iconsMap[trimmed];
+
+  // 2. PascalCase conversion (e.g. "droplet" -> "Droplet")
+  const pascalName = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+  if (iconsMap[pascalName]) return iconsMap[pascalName];
+
+  // 3. Case-insensitive lookup (e.g. "droplet" -> "Droplet")
+  const lowerName = trimmed.toLowerCase();
+  const foundKey = Object.keys(iconsMap).find((k) => k.toLowerCase() === lowerName);
+  if (foundKey && iconsMap[foundKey]) return iconsMap[foundKey];
+
+  return Icons.ExternalLink;
+}
+
 function DynamicIcon({ name, className }: { name: string; className?: string }) {
-  const IconComponent =
-    ((Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>)[name] || Icons.ExternalLink;
+  const IconComponent = getIconComponent(name);
   return <IconComponent className={className} />;
 }
 
@@ -747,12 +769,12 @@ export default function AdminDashboardPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">图标名称 (Icon Name)</label>
+                    <label className="block text-[11px] text-slate-400 mb-1">图标名称 (大小写通用)</label>
                     <input
                       type="text"
-                      value={editingItem.icon || "ExternalLink"}
+                      value={editingItem.icon !== undefined ? editingItem.icon : "ExternalLink"}
                       onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
-                      placeholder="Download / Trophy ..."
+                      placeholder="输入如 droplet, Download, Trophy..."
                       className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
                     />
                   </div>
@@ -779,7 +801,7 @@ export default function AdminDashboardPage() {
                         type="button"
                         onClick={() => setEditingItem({ ...editingItem, icon: iconName })}
                         className={`px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border transition-all ${
-                          editingItem.icon === iconName
+                          editingItem.icon?.toLowerCase() === iconName.toLowerCase()
                             ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold"
                             : "bg-slate-900/80 border-white/5 text-slate-400 hover:text-white hover:border-white/20"
                         }`}
