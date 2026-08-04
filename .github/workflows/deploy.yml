@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - master # 触发的分支
+  workflow_dispatch: # 支持在 GitHub 网页 Actions 页面点击 Run workflow 手动触发部署
+
+# 并发控制：避免多次连续 push 导致并发部署冲突与服务器资源竞争
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
