@@ -248,7 +248,7 @@ export default function AdminDashboardPage() {
         }
       }
     } catch {
-      showMessage("error", "加载数据失败，请检查数据库配置");
+      showMessage("error", tAdmin("load_error"));
     } finally {
       setLoading(false);
     }
@@ -262,7 +262,7 @@ export default function AdminDashboardPage() {
         setItemsList(data);
       }
     } catch {
-      showMessage("error", "获取导航卡片失败");
+      showMessage("error", tAdmin("fetch_items_error"));
     }
   };
 
@@ -315,15 +315,15 @@ export default function AdminDashboardPage() {
       });
 
       if (res.ok) {
-        showMessage("success", isEdit ? "板块更新成功" : "板块新建成功");
+        showMessage("success", tAdmin("section_save_success"));
         setSectionModalOpen(false);
         setEditingSection(null);
         fetchData();
       } else {
-        throw new Error("操作失败");
+        throw new Error(tAdmin("op_failed"));
       }
     } catch (err) {
-      showMessage("error", err instanceof Error ? err.message : "保存板块失败");
+      showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
     }
   };
 
@@ -332,13 +332,13 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`/api/admin/sections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        showMessage("success", "板块删除成功");
+        showMessage("success", tAdmin("section_delete_success"));
         fetchData();
       } else {
-        throw new Error("删除失败");
+        throw new Error(tAdmin("op_failed"));
       }
     } catch (err) {
-      showMessage("error", err instanceof Error ? err.message : "删除失败");
+      showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
     }
   };
 
@@ -355,14 +355,14 @@ export default function AdminDashboardPage() {
       });
 
       if (res.ok) {
-        showMessage("success", isEdit ? "卡片更新成功" : "卡片新建成功");
+        showMessage("success", tAdmin("item_save_success"));
         setItemModalOpen(false);
         if (selectedSectionId) fetchItems(selectedSectionId);
       } else {
-        throw new Error("操作失败");
+        throw new Error(tAdmin("op_failed"));
       }
     } catch (err) {
-      showMessage("error", err instanceof Error ? err.message : "保存卡片失败");
+      showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
     }
   };
 
@@ -371,13 +371,13 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`/api/admin/items?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        showMessage("success", "卡片已删除");
+        showMessage("success", tAdmin("item_delete_success"));
         if (selectedSectionId) fetchItems(selectedSectionId);
       } else {
-        throw new Error("删除失败");
+        throw new Error(tAdmin("op_failed"));
       }
     } catch (err) {
-      showMessage("error", err instanceof Error ? err.message : "删除失败");
+      showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
     }
   };
 
@@ -385,7 +385,7 @@ export default function AdminDashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
         <Loader2 className="w-8 h-8 animate-spin text-hextech-blue mr-3" />
-        <span>管理后台加载中...</span>
+        <span>{tAdmin("loading")}</span>
       </div>
     );
   }

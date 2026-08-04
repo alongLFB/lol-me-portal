@@ -17,10 +17,18 @@
     "footer_copyright": "© 2026 LOL 中东服华人社区. GLHF."
   },
   "admin": {
+    "loading": "管理后台加载中...",
     "dashboard_title": "LOL 中东服门户 · 后台管理",
     "dashboard_subtitle": "中英文多语言配置、板块分类与导航卡片全能控制面板",
     "preview_site": "预览前台",
     "logout": "退出登录",
+    "load_error": "加载数据失败，请检查数据库配置",
+    "fetch_items_error": "获取导航卡片失败",
+    "section_save_success": "板块保存成功！",
+    "section_delete_success": "板块已删除！",
+    "item_save_success": "卡片保存成功！",
+    "item_delete_success": "卡片已删除！",
+    "op_failed": "操作失败",
     "tabs": {
       "settings": "全站设置 (中英文)",
       "sections": "板块分类管理",
@@ -98,6 +106,7 @@
     "submitting": "安全校验中...",
     "success": "登录成功！正在跳转...",
     "attempt_left": "密码错误！还可重试 {count} 次",
-    "locked": "连续 5 次输错密码，该设备/IP 已被临时锁定 15 分钟！"
+    "locked": "连续 5 次输错密码，该设备/IP 已被临时锁定 15 分钟！",
+    "back_to_home": "← 返回前台 Portal"
   }
 }

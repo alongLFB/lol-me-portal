@@ -116,7 +116,7 @@ export default function AdminLoginPage() {
             href={`/${locale}`}
             className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
           >
-            ← 返回前台 Portal
+            {tLogin("back_to_home")}
           </a>
         </div>
       </div>
