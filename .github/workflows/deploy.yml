@@ -32,4 +32,4 @@ jobs:
             npm run build
             export APP_PORT=$(grep -E '^PORT=' .env.local | cut -d '=' -f2)
             export APP_PORT=${APP_PORT:-3007}
-            pm2 restart lol-me-portal --update-env || pm2 start npm --name "lol-me-portal" -- start -- -p $APP_PORT
+            pm2 reload lol-me-portal --update-env || pm2 start npm --name "lol-me-portal" -- start -- -p $APP_PORT
