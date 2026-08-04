@@ -164,9 +164,11 @@ function DynamicIcon({ name, className }: { name: string; className?: string }) 
   return <IconComponent className={className} />;
 }
 
+import { useI18n } from "@/components/providers/I18nProvider";
+
 export default function AdminDashboardPage() {
   const tAdmin = useTranslations("admin");
-  const locale = useLocale();
+  const { locale } = useI18n();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -381,7 +383,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  if (loading) {
+  if (loading && sectionsList.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
         <Loader2 className="w-8 h-8 animate-spin text-hextech-blue mr-3" />

@@ -74,10 +74,12 @@ function DynamicIcon({ name, className }: { name: string; className?: string }) 
   return <IconComponent className={className} />;
 }
 
+import { useI18n } from '@/components/providers/I18nProvider';
+
 export default function Home() {
   const tHome = useTranslations("home");
   const tNav = useTranslations("nav");
-  const locale = useLocale();
+  const { locale } = useI18n();
 
   const [data, setData] = useState<PortalData | null>(null);
   const [loading, setLoading] = useState(true);

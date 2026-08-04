@@ -1,14 +1,6 @@
-import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
-
-import zhMessages from "../../../messages/zh.json";
-import enMessages from "../../../messages/en.json";
-
-const messagesMap = {
-  zh: zhMessages,
-  en: enMessages,
-};
+import { I18nProvider } from "@/components/providers/I18nProvider";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -27,11 +19,9 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const messages = messagesMap[locale as "zh" | "en"] || zhMessages;
-
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
+    <I18nProvider initialLocale={locale as "zh" | "en"}>
       {children}
-    </NextIntlClientProvider>
+    </I18nProvider>
   );
 }
