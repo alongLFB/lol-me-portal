@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "lucide-react";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import {
   LayoutDashboard,
   Settings,
@@ -23,11 +24,13 @@ import {
   Grid,
   X,
   Palette,
+  Globe,
 } from "lucide-react";
 
 interface SectionData {
   id: number;
   title: string;
+  title_en?: string;
   full_width: boolean;
   sort_order: number;
   items?: ItemData[];
@@ -37,7 +40,9 @@ interface ItemData {
   id: number;
   section_id: number;
   title: string;
+  title_en?: string;
   desc: string;
+  desc_en?: string;
   link: string;
   icon: string;
   color: string;
@@ -135,21 +140,17 @@ const COLOR_PRESETS = [
   { name: "恕瑞玛黄", value: "text-yellow-300", bg: "#fde047" },
 ];
 
-// Smart Lucide Icon resolution with case-insensitive and PascalCase matching
 function getIconComponent(name: string) {
   if (!name || !name.trim()) return Icons.ExternalLink;
 
   const iconsMap = (Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>;
   const trimmed = name.trim();
 
-  // 1. Exact match
   if (iconsMap[trimmed]) return iconsMap[trimmed];
 
-  // 2. PascalCase conversion
   const pascalName = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
   if (iconsMap[pascalName]) return iconsMap[pascalName];
 
-  // 3. Case-insensitive lookup
   const lowerName = trimmed.toLowerCase();
   const foundKey = Object.keys(iconsMap).find((k) => k.toLowerCase() === lowerName);
   if (foundKey && iconsMap[foundKey]) return iconsMap[foundKey];
@@ -168,13 +169,18 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<"settings" | "sections" | "items">("settings");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  // Settings state
+  // Settings state with bilingual support
   const [settings, setSettings] = useState({
     header_title: "",
+    header_title_en: "",
     header_subtitle: "",
+    header_subtitle_en: "",
     alert_title: "",
+    alert_title_en: "",
     alert_content: "",
+    alert_content_en: "",
     footer_copyright: "",
+    footer_copyright_en: "",
   });
 
   // Sections & Items state
@@ -215,10 +221,15 @@ export default function AdminDashboardPage() {
         const defaultFooter = `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`;
         setSettings({
           header_title: data.header_title || "LOL 中东服玩家社区门户",
+          header_title_en: data.header_title_en || "LOL Middle East Community Portal",
           header_subtitle: data.header_subtitle || "汇聚中东服华人群友，一站式开黑工具与数据看板。",
+          header_subtitle_en: data.header_subtitle_en || "Hub for League of Legends ME Server Chinese Community. Tools & Leaderboards.",
           alert_title: data.alert_title || "群友行动指引",
+          alert_title_en: data.alert_title_en || "Community Action Guide",
           alert_content: data.alert_content || "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。",
+          alert_content_en: data.alert_content_en || "Please change your group nickname to: 'Riot ID#Tag - Rank - Main Position' (e.g. Faker#KR1 - Challenger - MID).",
           footer_copyright: data.footer_copyright || defaultFooter,
+          footer_copyright_en: data.footer_copyright_en || `© ${new Date().getFullYear()} LOL ME Chinese Community. GLHF.`,
         });
       }
 
@@ -280,7 +291,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify(settings),
       });
       if (res.ok) {
-        showMessage("success", "全站配置保存成功！");
+        showMessage("success", "全站中英文配置保存成功！");
       } else {
         throw new Error("保存失败");
       }
@@ -391,22 +402,23 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">LOL 中东服门户 · 后台管理</h1>
-              <p className="text-xs text-slate-400">实时配置前端页面显示内容与数据库选项</p>
+              <p className="text-xs text-slate-400">中英文多语言配置、板块与链接全能配置中心</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
+            <ThemeToggle />
             <a
               href="/"
               target="_blank"
-              className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-slate-300 transition-colors inline-flex items-center"
+              className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-slate-300 transition-colors inline-flex items-center"
             >
               <Eye className="w-4 h-4 mr-1.5" />
               预览前台
             </a>
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-xs font-medium text-red-400 transition-colors inline-flex items-center"
+              className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-xs font-medium text-red-400 transition-colors inline-flex items-center"
             >
               <LogOut className="w-4 h-4 mr-1.5" />
               退出登录
@@ -443,7 +455,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <Settings className="w-4 h-4 mr-2" />
-            全站设置
+            全站设置 (中英文)
           </button>
           <button
             onClick={() => setActiveTab("sections")}
@@ -474,68 +486,143 @@ export default function AdminDashboardPage() {
           <div className="bg-slate-900/60 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
             <h2 className="text-lg font-bold text-white mb-6 flex items-center">
               <Sparkles className="w-5 h-5 text-hextech-blue mr-2" />
-              前台 Header 与公告指引设置
+              前台 Header 与公告指引设置 (支持中英文)
             </h2>
             <form onSubmit={handleSaveSettings} className="space-y-6">
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                  主标题 (Header Title)
-                </label>
-                <input
-                  type="text"
-                  value={settings.header_title}
-                  onChange={(e) => setSettings({ ...settings, header_title: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
-                />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    主标题 (中文 Header Title)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.header_title}
+                    onChange={(e) => setSettings({ ...settings, header_title: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
+                    <Globe className="w-3.5 h-3.5 mr-1" />
+                    主标题 (英文 Header Title EN)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.header_title_en}
+                    onChange={(e) => setSettings({ ...settings, header_title_en: e.target.value })}
+                    placeholder="LOL Middle East Community Portal"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                  副标题 (Header Subtitle)
-                </label>
-                <input
-                  type="text"
-                  value={settings.header_subtitle}
-                  onChange={(e) => setSettings({ ...settings, header_subtitle: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    副标题 (中文 Header Subtitle)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.header_subtitle}
+                    onChange={(e) => setSettings({ ...settings, header_subtitle: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
+                    <Globe className="w-3.5 h-3.5 mr-1" />
+                    副标题 (英文 Header Subtitle EN)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.header_subtitle_en}
+                    onChange={(e) => setSettings({ ...settings, header_subtitle_en: e.target.value })}
+                    placeholder="Hub for League of Legends ME Server Chinese Community."
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                  提示框标题 (Alert Title)
-                </label>
-                <input
-                  type="text"
-                  value={settings.alert_title}
-                  onChange={(e) => setSettings({ ...settings, alert_title: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    提示框标题 (中文 Alert Title)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.alert_title}
+                    onChange={(e) => setSettings({ ...settings, alert_title: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
+                    <Globe className="w-3.5 h-3.5 mr-1" />
+                    提示框标题 (英文 Alert Title EN)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.alert_title_en}
+                    onChange={(e) => setSettings({ ...settings, alert_title_en: e.target.value })}
+                    placeholder="Community Action Guide"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                  提示框内容 (Alert Content)
-                </label>
-                <textarea
-                  rows={3}
-                  value={settings.alert_content}
-                  onChange={(e) => setSettings({ ...settings, alert_content: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    提示框内容 (中文 Alert Content)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.alert_content}
+                    onChange={(e) => setSettings({ ...settings, alert_content: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
+                    <Globe className="w-3.5 h-3.5 mr-1" />
+                    提示框内容 (英文 Alert Content EN)
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={settings.alert_content_en}
+                    onChange={(e) => setSettings({ ...settings, alert_content_en: e.target.value })}
+                    placeholder="Please change your group nickname to: Riot ID#Tag - Rank - Main Position"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                  页脚版权信息 (Footer Copyright)
-                </label>
-                <input
-                  type="text"
-                  value={settings.footer_copyright}
-                  onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })}
-                  placeholder="© 2026 LOL 中东服华人社区. GLHF."
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                    页脚版权信息 (中文 Footer Copyright)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.footer_copyright}
+                    onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
+                    <Globe className="w-3.5 h-3.5 mr-1" />
+                    页脚版权信息 (英文 Footer Copyright EN)
+                  </label>
+                  <input
+                    type="text"
+                    value={settings.footer_copyright_en}
+                    onChange={(e) => setSettings({ ...settings, footer_copyright_en: e.target.value })}
+                    placeholder="© 2026 LOL ME Chinese Community. GLHF."
+                    className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                  />
+                </div>
               </div>
 
               <button
@@ -543,7 +630,7 @@ export default function AdminDashboardPage() {
                 className="py-3 px-6 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
               >
                 <Save className="w-4 h-4 mr-2" />
-                保存全站设置
+                保存全站中英文设置
               </button>
             </form>
           </div>
@@ -556,7 +643,7 @@ export default function AdminDashboardPage() {
               <h2 className="text-lg font-bold text-white">导航板块列表</h2>
               <button
                 onClick={() => {
-                  setEditingSection({ title: "", sort_order: sectionsList.length, full_width: false });
+                  setEditingSection({ title: "", title_en: "", sort_order: sectionsList.length, full_width: false });
                   setSectionModalOpen(true);
                 }}
                 className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
@@ -575,6 +662,9 @@ export default function AdminDashboardPage() {
                   <div className="space-y-1">
                     <div className="flex items-center space-x-3">
                       <span className="font-bold text-white text-base">{sec.title}</span>
+                      {sec.title_en && (
+                        <span className="text-xs text-hextech-blue font-mono">({sec.title_en})</span>
+                      )}
                       {sec.full_width && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                           全宽展示
@@ -624,7 +714,7 @@ export default function AdminDashboardPage() {
                 >
                   {sectionsList.map((sec) => (
                     <option key={sec.id} value={sec.id}>
-                      {sec.title}
+                      {sec.title} {sec.title_en ? `(${sec.title_en})` : ""}
                     </option>
                   ))}
                 </select>
@@ -636,7 +726,9 @@ export default function AdminDashboardPage() {
                   setEditingItem({
                     section_id: selectedSectionId,
                     title: "",
+                    title_en: "",
                     desc: "",
+                    desc_en: "",
                     link: "",
                     icon: "ExternalLink",
                     color: "text-hextech-blue",
@@ -667,7 +759,12 @@ export default function AdminDashboardPage() {
                           <DynamicIcon name={item.icon} className="w-6 h-6" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-white text-base">{item.title}</h3>
+                          <h3 className="font-bold text-white text-base flex items-center space-x-2">
+                            <span>{item.title}</span>
+                            {item.title_en && (
+                              <span className="text-xs text-hextech-blue font-normal">({item.title_en})</span>
+                            )}
+                          </h3>
                           <span className="text-[11px] text-slate-400 font-mono">
                             图标: <code className="text-hextech-blue">{item.icon}</code>
                           </span>
@@ -679,7 +776,8 @@ export default function AdminDashboardPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mb-3">{item.desc}</p>
+                    <p className="text-xs text-slate-400 mb-1">{item.desc}</p>
+                    {item.desc_en && <p className="text-xs text-hextech-blue/80 italic mb-3">EN: {item.desc_en}</p>}
                     <a
                       href={item.link}
                       target="_blank"
@@ -728,12 +826,26 @@ export default function AdminDashboardPage() {
             </h3>
             <form onSubmit={handleSaveSection} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">板块标题</label>
+                <label className="block text-xs text-slate-400 mb-1">中文板块标题</label>
                 <input
                   type="text"
                   required
                   value={editingSection.title || ""}
                   onChange={(e) => setEditingSection({ ...editingSection, title: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-hextech-blue mb-1 flex items-center">
+                  <Globe className="w-3 h-3 mr-1" />
+                  英文板块标题 (Title EN)
+                </label>
+                <input
+                  type="text"
+                  value={editingSection.title_en || ""}
+                  onChange={(e) => setEditingSection({ ...editingSection, title_en: e.target.value })}
+                  placeholder="e.g. Beginner & Game Client"
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
                 />
               </div>
@@ -804,30 +916,59 @@ export default function AdminDashboardPage() {
                 >
                   {sectionsList.map((sec) => (
                     <option key={sec.id} value={sec.id}>
-                      {sec.title}
+                      {sec.title} {sec.title_en ? `(${sec.title_en})` : ""}
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs text-slate-400 mb-1">卡片标题</label>
-                <input
-                  type="text"
-                  required
-                  value={editingItem.title || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-slate-400 mb-1">中文卡片标题</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingItem.title || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-hextech-blue mb-1 flex items-center">
+                    <Globe className="w-3 h-3 mr-1" />
+                    英文卡片标题 (EN)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.title_en || ""}
+                    onChange={(e) => setEditingItem({ ...editingItem, title_en: e.target.value })}
+                    placeholder="e.g. ME Client Download"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">描述文本</label>
+                <label className="block text-xs text-slate-400 mb-1">中文描述文本</label>
                 <textarea
                   rows={2}
                   required
                   value={editingItem.desc || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, desc: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-hextech-blue mb-1 flex items-center">
+                  <Globe className="w-3 h-3 mr-1" />
+                  英文描述文本 (Desc EN)
+                </label>
+                <textarea
+                  rows={2}
+                  value={editingItem.desc_en || ""}
+                  onChange={(e) => setEditingItem({ ...editingItem, desc_en: e.target.value })}
+                  placeholder="e.g. Unified Riot launcher for ME server."
                   className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
                 />
               </div>
@@ -849,7 +990,6 @@ export default function AdminDashboardPage() {
                   <label className="block text-xs font-semibold text-slate-300">
                     1. Lucide 图标选择与预览
                   </label>
-                  {/* Clickable Live Preview & Modal Opener */}
                   <button
                     type="button"
                     onClick={() => {

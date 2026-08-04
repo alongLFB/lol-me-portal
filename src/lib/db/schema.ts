@@ -14,6 +14,7 @@ export const siteSettings = sqliteTable("site_settings", {
 export const sections = sqliteTable("sections", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
+  title_en: text("title_en"),
   sort_order: integer("sort_order").notNull().default(0),
   full_width: integer("full_width", { mode: "boolean" })
     .notNull()
@@ -30,7 +31,9 @@ export const portalItems = sqliteTable("portal_items", {
     .notNull()
     .references(() => sections.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
+  title_en: text("title_en"),
   desc: text("desc").notNull(),
+  desc_en: text("desc_en"),
   link: text("link").notNull(),
   icon: text("icon").notNull().default("ExternalLink"),
   color: text("color").notNull().default("text-hextech-blue"),

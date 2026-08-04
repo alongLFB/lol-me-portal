@@ -13,12 +13,15 @@ import {
 export interface DefaultSection {
   id?: number;
   title: string;
+  title_en?: string;
   fullWidth?: boolean;
   sortOrder?: number;
   items: {
     id?: number;
     title: string;
+    title_en?: string;
     desc: string;
+    desc_en?: string;
     link: string;
     icon: string;
     color: string;
@@ -31,21 +34,29 @@ export interface DefaultSection {
 
 export const DEFAULT_SITE_SETTINGS: Record<string, string> = {
   header_title: "LOL 中东服玩家社区门户",
+  header_title_en: "LOL Middle East Community Portal",
   header_subtitle: "汇聚中东服华人群友，一站式开黑工具与数据看板。",
+  header_subtitle_en: "Hub for League of Legends ME Server Chinese Community. Tools & Leaderboards.",
   alert_title: "群友行动指引",
+  alert_title_en: "Community Action Guide",
   alert_content: "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。",
+  alert_content_en: "Please change your group nickname to: 'Riot ID#Tag - Rank - Main Position' (e.g. Faker#KR1 - Challenger - MID).",
   footer_copyright: `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`,
+  footer_copyright_en: `© ${new Date().getFullYear()} LOL ME Chinese Community. GLHF.`,
 };
 
 export const DEFAULT_SECTIONS: DefaultSection[] = [
   {
     title: "新手起航与客户端",
+    title_en: "Beginner & Game Client",
     fullWidth: false,
     sortOrder: 0,
     items: [
       {
         title: "中东服官方下载",
+        title_en: "ME Server Client Download",
         desc: "外服共用同一个客户端，服务器取决于账号所属地区。",
+        desc_en: "Riot uses a unified launcher; server region depends on your account.",
         link: "https://lol.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.me1.exe",
         icon: "Download",
         color: "text-hextech-blue",
@@ -55,7 +66,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "账号注册与转服教程",
+        title_en: "Account Registration & Transfer",
         desc: "Riot 官方教程，解答跨区与账号相关问题。",
+        desc_en: "Official Riot guide answering region transfer & account FAQs.",
         link: "https://support-leagueoflegends.riotgames.com/hc/zh-tw/articles/201751684--%E8%8B%B1%E9%9B%84%E8%81%AF%E7%9B%9F-%E5%9C%B0%E5%8D%80%E4%BC%BA%E6%9C%8D%E5%99%A8",
         icon: "BookOpen",
         color: "text-lol-gold",
@@ -67,12 +80,15 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
   },
   {
     title: "社群开黑语音",
+    title_en: "Community Voice Chat",
     fullWidth: false,
     sortOrder: 1,
     items: [
       {
         title: "Discord 专属频道",
+        title_en: "Official Discord Server",
         desc: "寻找车队、语音开黑，点击即刻加入华人聚集地！",
+        desc_en: "Find teammates and join voice chat in our Discord server!",
         link: "https://discord.gg/UJpAURGy6E",
         icon: "Headset",
         color: "text-[#5865F2]",
@@ -83,7 +99,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "DC 语音优化工具",
+        title_en: "Discord Voice Optimizer",
         desc: "Drover：用于优化和支持 Discord 语音体验的辅助工具。",
+        desc_en: "Drover: Utility tool for optimizing Discord voice experience.",
         link: "https://github.com/hdrover/discord-drover",
         icon: "Zap",
         color: "text-slate-300",
@@ -95,12 +113,15 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
   },
   {
     title: "游戏上分神器",
+    title_en: "Ranked Boosting Utilities",
     fullWidth: false,
     sortOrder: 2,
     items: [
       {
         title: "League Akari",
+        title_en: "League Akari",
         desc: "LOL 自动接收对局 + 选人阶段查看队友 ID 避坑神器。",
+        desc_en: "Auto-accept match & champ select lobby ID inspection tool.",
         link: "https://leagueakari.github.io/",
         icon: "Trophy",
         color: "text-red-400",
@@ -110,7 +131,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "Lobby Reveal",
+        title_en: "Lobby Reveal",
         desc: "另一款功能强大的选人阶段查看队友 ID 避坑工具。",
+        desc_en: "Powerful tool to inspect teammates' IDs during champ lobby select.",
         link: "https://lobbyreveal.app/",
         icon: "Eye",
         color: "text-purple-400",
@@ -120,7 +143,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "黄金之路网页小游戏",
+        title_en: "Golden Road Minigame",
         desc: "趣味互动推荐，排队闲暇之余的娱乐神器。",
+        desc_en: "Fun interactive minigame to play during queue wait times.",
         link: "https://goldenroadlol.alonglfb.com/",
         icon: "Gamepad2",
         color: "text-amber-400",
@@ -132,12 +157,15 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
   },
   {
     title: "战绩查询与数据评估",
+    title_en: "Match Stats & AI Analysis",
     fullWidth: false,
     sortOrder: 3,
     items: [
       {
         title: "OP.GG 战绩查询",
+        title_en: "OP.GG Stats Lookup",
         desc: "全球最权威的英雄联盟玩家战绩、英雄数据查询平台。",
+        desc_en: "World leading League of Legends player & hero stats platform.",
         link: "https://op.gg/zh-cn",
         icon: "Search",
         color: "text-blue-400",
@@ -147,7 +175,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "AI 召唤师神谕",
+        title_en: "AI Summoner Oracle",
         desc: "输入你的 Riot ID，让虚空枢纽的 AI 为你的近期战绩给出最毒舌或最激情的裁决。",
+        desc_en: "Enter your Riot ID for AI-powered roast and analysis on recent matches.",
         link: "https://loleval.alonglfb.com/zh",
         icon: "Activity",
         color: "text-purple-400",
@@ -159,12 +189,15 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
   },
   {
     title: "群友数据与排行榜",
+    title_en: "Community Roster & Leaderboard",
     fullWidth: true,
     sortOrder: 4,
     items: [
       {
         title: "中东服群友资料录入",
+        title_en: "Member Info Registration",
         desc: "新群友请务必在此录入信息，方便大家认识与组队。",
+        desc_en: "New members please register your info here for team matching.",
         link: "https://group-melol.alonglfb.com",
         icon: "UserPlus",
         color: "text-hextech-blue",
@@ -174,7 +207,9 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
       },
       {
         title: "群友大合集在线表格",
+        title_en: "Community Roster Sheet",
         desc: "添加 ID 方便开黑，同时群主将基于此数据制作【群内中东排行榜统计】！",
+        desc_en: "View member IDs sheet and official community ranking stats!",
         link: "https://docs.google.com/spreadsheets/d/1uC4hdBxfkCHCT4EPc60OqGifrboigXdyJ2RAgVE16sA/edit?usp=sharing",
         icon: "Table",
         color: "text-green-400",
@@ -196,6 +231,7 @@ export async function seedDefaultData() {
       const secDef = DEFAULT_SECTIONS[secIdx];
       const insertedSec = await createSection({
         title: secDef.title,
+        title_en: secDef.title_en || secDef.title,
         sort_order: secDef.sortOrder ?? secIdx,
         full_width: secDef.fullWidth ?? false,
       });
@@ -207,7 +243,9 @@ export async function seedDefaultData() {
           await createPortalItem({
             section_id: secId,
             title: itemDef.title,
+            title_en: itemDef.title_en || itemDef.title,
             desc: itemDef.desc,
+            desc_en: itemDef.desc_en || itemDef.desc,
             link: itemDef.link,
             icon: itemDef.icon,
             color: itemDef.color,
@@ -259,6 +297,7 @@ export async function getPortalData(): Promise<{
   sections: {
     id: number;
     title: string;
+    title_en?: string | null;
     full_width: boolean;
     sort_order: number;
     items: PortalItem[];
@@ -268,7 +307,6 @@ export async function getPortalData(): Promise<{
     let allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
 
     if (allSections.length === 0) {
-      // Auto-seed empty database
       await seedDefaultData();
       allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
     }
@@ -299,13 +337,16 @@ export async function getPortalData(): Promise<{
       sections: DEFAULT_SECTIONS.map((sec, secIdx) => ({
         id: secIdx + 1,
         title: sec.title,
+        title_en: sec.title_en,
         full_width: sec.fullWidth ?? false,
         sort_order: sec.sortOrder ?? secIdx,
         items: sec.items.map((item, itemIdx) => ({
           id: itemIdx + 1,
           section_id: secIdx + 1,
           title: item.title,
+          title_en: item.title_en ?? item.title,
           desc: item.desc,
+          desc_en: item.desc_en ?? item.desc,
           link: item.link,
           icon: item.icon,
           color: item.color,
@@ -335,6 +376,7 @@ export async function getAllSections(): Promise<Section[]> {
     return DEFAULT_SECTIONS.map((sec, secIdx) => ({
       id: secIdx + 1,
       title: sec.title,
+      title_en: sec.title_en || null,
       sort_order: sec.sortOrder ?? secIdx,
       full_width: sec.fullWidth ?? false,
       created_at: new Date().toISOString(),
@@ -372,7 +414,9 @@ export async function getItemsBySectionId(sectionId: number): Promise<PortalItem
       id: itemIdx + 1,
       section_id: sectionId,
       title: item.title,
+      title_en: item.title_en || item.title,
       desc: item.desc,
+      desc_en: item.desc_en || item.desc,
       link: item.link,
       icon: item.icon,
       color: item.color,
