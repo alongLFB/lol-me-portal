@@ -185,6 +185,45 @@ export const DEFAULT_SECTIONS: DefaultSection[] = [
   },
 ];
 
+export async function seedDefaultData() {
+  try {
+    for (const [key, value] of Object.entries(DEFAULT_SITE_SETTINGS)) {
+      await updateSiteSetting(key, value);
+    }
+
+    for (let secIdx = 0; secIdx < DEFAULT_SECTIONS.length; secIdx++) {
+      const secDef = DEFAULT_SECTIONS[secIdx];
+      const insertedSec = await createSection({
+        title: secDef.title,
+        sort_order: secDef.sortOrder ?? secIdx,
+        full_width: secDef.fullWidth ?? false,
+      });
+
+      const secId = insertedSec[0]?.id;
+      if (secId) {
+        for (let itemIdx = 0; itemIdx < secDef.items.length; itemIdx++) {
+          const itemDef = secDef.items[itemIdx];
+          await createPortalItem({
+            section_id: secId,
+            title: itemDef.title,
+            desc: itemDef.desc,
+            link: itemDef.link,
+            icon: itemDef.icon,
+            color: itemDef.color,
+            border_glow: itemDef.borderGlow,
+            shadow_glow: itemDef.shadowGlow,
+            featured: itemDef.featured ?? false,
+            sort_order: itemDef.sortOrder ?? itemIdx,
+          });
+        }
+      }
+    }
+    console.log("Successfully auto-seeded default portal data into D1 database!");
+  } catch (err) {
+    console.warn("Auto-seeding failed:", err);
+  }
+}
+
 // ─── Site Settings Queries ───────────────────────────────────────────────────
 
 export async function getSiteSettings(): Promise<Record<string, string>> {
@@ -225,38 +264,18 @@ export async function getPortalData(): Promise<{
   }[];
 }> {
   try {
-    const [settingsMap, allSections, allItems] = await Promise.all([
-      getSiteSettings(),
-      db.select().from(sections).orderBy(asc(sections.sort_order)),
-      db.select().from(portalItems).orderBy(asc(portalItems.sort_order)),
-    ]);
+    let allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
 
     if (allSections.length === 0) {
-      // If DB is connected but empty, construct default format with mock negative IDs
-      return {
-        settings: DEFAULT_SITE_SETTINGS,
-        sections: DEFAULT_SECTIONS.map((sec, secIdx) => ({
-          id: secIdx + 1,
-          title: sec.title,
-          full_width: sec.fullWidth ?? false,
-          sort_order: sec.sortOrder ?? secIdx,
-          items: sec.items.map((item, itemIdx) => ({
-            id: itemIdx + 1,
-            section_id: secIdx + 1,
-            title: item.title,
-            desc: item.desc,
-            link: item.link,
-            icon: item.icon,
-            color: item.color,
-            border_glow: item.borderGlow,
-            shadow_glow: item.shadowGlow,
-            featured: item.featured ?? false,
-            sort_order: item.sortOrder ?? itemIdx,
-            created_at: new Date().toISOString(),
-          })),
-        })),
-      };
+      // Auto-seed empty database
+      await seedDefaultData();
+      allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
     }
+
+    const [settingsMap, allItems] = await Promise.all([
+      getSiteSettings(),
+      db.select().from(portalItems).orderBy(asc(portalItems.sort_order)),
+    ]);
 
     const itemsBySection = new Map<number, PortalItem[]>();
     for (const item of allItems) {
@@ -303,7 +322,23 @@ export async function getPortalData(): Promise<{
 // ─── Section CRUD ─────────────────────────────────────────────────────────────
 
 export async function getAllSections(): Promise<Section[]> {
-  return db.select().from(sections).orderBy(asc(sections.sort_order));
+  try {
+    let list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+    if (list.length === 0) {
+      await seedDefaultData();
+      list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+    }
+    return list;
+  } catch (error) {
+    console.warn("Using fallback empty/default sections due to DB error:", error);
+    return DEFAULT_SECTIONS.map((sec, secIdx) => ({
+      id: secIdx + 1,
+      title: sec.title,
+      sort_order: sec.sortOrder ?? secIdx,
+      full_width: sec.fullWidth ?? false,
+      created_at: new Date().toISOString(),
+    }));
+  }
 }
 
 export async function createSection(data: NewSection) {
@@ -321,11 +356,32 @@ export async function deleteSection(id: number) {
 // ─── Item CRUD ────────────────────────────────────────────────────────────────
 
 export async function getItemsBySectionId(sectionId: number): Promise<PortalItem[]> {
-  return db
-    .select()
-    .from(portalItems)
-    .where(eq(portalItems.section_id, sectionId))
-    .orderBy(asc(portalItems.sort_order));
+  try {
+    return await db
+      .select()
+      .from(portalItems)
+      .where(eq(portalItems.section_id, sectionId))
+      .orderBy(asc(portalItems.sort_order));
+  } catch (error) {
+    console.warn("Using fallback default items for section due to DB error:", error);
+    const secIndex = sectionId - 1;
+    const secDef = DEFAULT_SECTIONS[secIndex];
+    if (!secDef) return [];
+    return secDef.items.map((item, itemIdx) => ({
+      id: itemIdx + 1,
+      section_id: sectionId,
+      title: item.title,
+      desc: item.desc,
+      link: item.link,
+      icon: item.icon,
+      color: item.color,
+      border_glow: item.borderGlow,
+      shadow_glow: item.shadowGlow,
+      featured: item.featured ?? false,
+      sort_order: item.sortOrder ?? itemIdx,
+      created_at: new Date().toISOString(),
+    }));
+  }
 }
 
 export async function createPortalItem(data: NewPortalItem) {
