@@ -34,6 +34,7 @@ export const DEFAULT_SITE_SETTINGS: Record<string, string> = {
   header_subtitle: "汇聚中东服华人群友，一站式开黑工具与数据看板。",
   alert_title: "群友行动指引",
   alert_content: "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。",
+  footer_copyright: `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`,
 };
 
 export const DEFAULT_SECTIONS: DefaultSection[] = [

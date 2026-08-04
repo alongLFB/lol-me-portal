@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import * as Icons from "lucide-react";
 import {
@@ -19,6 +19,10 @@ import {
   Sparkles,
   Eye,
   Layers,
+  Search,
+  Grid,
+  X,
+  Palette,
 } from "lucide-react";
 
 interface SectionData {
@@ -43,7 +47,13 @@ interface ItemData {
   sort_order: number;
 }
 
-const COMMON_ICONS = [
+// Extract valid Lucide Icon component names
+const ALL_LUCIDE_ICONS: string[] = Object.keys(Icons).filter((key) => {
+  if (key === "Icon" || key.startsWith("Lucide") || key === "default" || key === "createLucideIcon") return false;
+  return key[0] === key[0].toUpperCase();
+});
+
+const POPULAR_ICONS = [
   "Download",
   "BookOpen",
   "Headset",
@@ -71,6 +81,58 @@ const COMMON_ICONS = [
   "Heart",
   "Code",
   "Terminal",
+  "Award",
+  "Bell",
+  "Bookmark",
+  "Box",
+  "Calendar",
+  "Camera",
+  "Check",
+  "Compass",
+  "Cpu",
+  "Crown",
+  "Database",
+  "FileText",
+  "Gift",
+  "Layers",
+  "Lightbulb",
+  "Lock",
+  "MapPin",
+  "Maximize2",
+  "Monitor",
+  "Music",
+  "Package",
+  "Phone",
+  "Play",
+  "Rocket",
+  "Server",
+  "Shield",
+  "ShoppingBag",
+  "Smile",
+  "Sword",
+  "Swords",
+  "Target",
+  "ThumbsUp",
+  "Users",
+  "Video",
+  "Wrench",
+];
+
+const COLOR_PRESETS = [
+  { name: "海克斯蓝", value: "text-hextech-blue", bg: "#0ac8b9" },
+  { name: "英雄联盟金", value: "text-lol-gold", bg: "#c89b3c" },
+  { name: "Discord 蓝", value: "text-[#5865F2]", bg: "#5865F2" },
+  { name: "虚空紫", value: "text-purple-400", bg: "#c084fc" },
+  { name: "暴击红", value: "text-red-400", bg: "#f87171" },
+  { name: "琥珀金", value: "text-amber-400", bg: "#fbbf24" },
+  { name: "蔚蓝", value: "text-blue-400", bg: "#60a5fa" },
+  { name: "祖安绿", value: "text-green-400", bg: "#4ade80" },
+  { name: "翡翠绿", value: "text-emerald-400", bg: "#34d399" },
+  { name: "青空蓝", value: "text-cyan-400", bg: "#22d3ee" },
+  { name: "白银白", value: "text-slate-300", bg: "#cbd5e1" },
+  { name: "玫瑰粉", value: "text-pink-400", bg: "#f472b6" },
+  { name: "烈焰橙", value: "text-orange-400", bg: "#fb923c" },
+  { name: "恕瑞玛黄", value: "text-yellow-300", bg: "#fde047" },
 ];
 
 // Smart Lucide Icon resolution with case-insensitive and PascalCase matching
@@ -80,14 +142,14 @@ function getIconComponent(name: string) {
   const iconsMap = (Icons as unknown) as Record<string, React.ComponentType<{ className?: string }>>;
   const trimmed = name.trim();
 
-  // 1. Exact match (e.g. "Droplet")
+  // 1. Exact match
   if (iconsMap[trimmed]) return iconsMap[trimmed];
 
-  // 2. PascalCase conversion (e.g. "droplet" -> "Droplet")
+  // 2. PascalCase conversion
   const pascalName = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
   if (iconsMap[pascalName]) return iconsMap[pascalName];
 
-  // 3. Case-insensitive lookup (e.g. "droplet" -> "Droplet")
+  // 3. Case-insensitive lookup
   const lowerName = trimmed.toLowerCase();
   const foundKey = Object.keys(iconsMap).find((k) => k.toLowerCase() === lowerName);
   if (foundKey && iconsMap[foundKey]) return iconsMap[foundKey];
@@ -112,6 +174,7 @@ export default function AdminDashboardPage() {
     header_subtitle: "",
     alert_title: "",
     alert_content: "",
+    footer_copyright: "",
   });
 
   // Sections & Items state
@@ -126,6 +189,10 @@ export default function AdminDashboardPage() {
   // Item modal state
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Partial<ItemData> | null>(null);
+
+  // Icon Picker Modal state
+  const [iconPickerOpen, setIconPickerOpen] = useState(false);
+  const [iconSearchQuery, setIconSearchQuery] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -145,11 +212,13 @@ export default function AdminDashboardPage() {
       const settingsRes = await fetch("/api/admin/settings");
       if (settingsRes.ok) {
         const data = await settingsRes.json();
+        const defaultFooter = `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`;
         setSettings({
-          header_title: data.header_title || "",
-          header_subtitle: data.header_subtitle || "",
-          alert_title: data.alert_title || "",
-          alert_content: data.alert_content || "",
+          header_title: data.header_title || "LOL 中东服玩家社区门户",
+          header_subtitle: data.header_subtitle || "汇聚中东服华人群友，一站式开黑工具与数据看板。",
+          alert_title: data.alert_title || "群友行动指引",
+          alert_content: data.alert_content || "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。",
+          footer_copyright: data.footer_copyright || defaultFooter,
         });
       }
 
@@ -191,6 +260,15 @@ export default function AdminDashboardPage() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/admin/login");
   };
+
+  // Filtered icons for Icon Picker modal
+  const filteredIcons = useMemo(() => {
+    const query = iconSearchQuery.trim().toLowerCase();
+    if (!query) {
+      return POPULAR_ICONS;
+    }
+    return ALL_LUCIDE_ICONS.filter((icon) => icon.toLowerCase().includes(query)).slice(0, 150);
+  }, [iconSearchQuery]);
 
   // ─── Settings Handlers ───────────────────────────────────────────────────────
   const handleSaveSettings = async (e: React.FormEvent) => {
@@ -443,6 +521,19 @@ export default function AdminDashboardPage() {
                   rows={3}
                   value={settings.alert_content}
                   onChange={(e) => setSettings({ ...settings, alert_content: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                  页脚版权信息 (Footer Copyright)
+                </label>
+                <input
+                  type="text"
+                  value={settings.footer_copyright}
+                  onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })}
+                  placeholder="© 2026 LOL 中东服华人社区. GLHF."
                   className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-white/10 text-white focus:outline-none focus:border-hextech-blue text-sm"
                 />
               </div>
@@ -752,50 +843,57 @@ export default function AdminDashboardPage() {
                 />
               </div>
 
-              {/* Icon & Color Selector with Live Preview */}
+              {/* Icon Selector Section */}
               <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-slate-300">
-                    Lucide 图标设置与实时预览
+                    1. Lucide 图标选择与预览
                   </label>
-                  {/* Live SVG Preview Badge */}
-                  <div className="flex items-center space-x-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-white/10">
-                    <span className="text-[11px] text-slate-400">预览:</span>
+                  {/* Clickable Live Preview & Modal Opener */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIconSearchQuery("");
+                      setIconPickerOpen(true);
+                    }}
+                    className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-white/10 hover:border-hextech-blue/50 transition-all group"
+                  >
+                    <span className="text-[11px] text-slate-400 group-hover:text-hextech-blue">点击打开图库:</span>
                     <div className={editingItem.color || "text-hextech-blue"}>
                       <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
                     </div>
-                  </div>
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">图标名称 (大小写通用)</label>
-                    <input
-                      type="text"
-                      value={editingItem.icon !== undefined ? editingItem.icon : "ExternalLink"}
-                      onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
-                      placeholder="输入如 droplet, Download, Trophy..."
-                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
-                    />
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-[11px] text-slate-400">图标名称</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIconSearchQuery("");
+                        setIconPickerOpen(true);
+                      }}
+                      className="text-[10px] text-hextech-blue hover:underline inline-flex items-center"
+                    >
+                      <Grid className="w-3 h-3 mr-0.5" />
+                      打开全量图标库
+                    </button>
                   </div>
-
-                  <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">图标颜色 Class</label>
-                    <input
-                      type="text"
-                      value={editingItem.color || "text-hextech-blue"}
-                      onChange={(e) => setEditingItem({ ...editingItem, color: e.target.value })}
-                      placeholder="text-hextech-blue / text-lol-gold"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={editingItem.icon !== undefined ? editingItem.icon : "ExternalLink"}
+                    onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
+                    placeholder="输入如 droplet, Download..."
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                  />
                 </div>
 
                 {/* Quick Icon Selector Buttons */}
                 <div>
                   <span className="block text-[11px] text-slate-400 mb-2">常用图标一键选择：</span>
-                  <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1">
-                    {COMMON_ICONS.map((iconName) => (
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1">
+                    {POPULAR_ICONS.slice(0, 14).map((iconName) => (
                       <button
                         key={iconName}
                         type="button"
@@ -810,7 +908,70 @@ export default function AdminDashboardPage() {
                         <span>{iconName}</span>
                       </button>
                     ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIconSearchQuery("");
+                        setIconPickerOpen(true);
+                      }}
+                      className="px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border bg-hextech-blue/10 border-hextech-blue/40 text-hextech-blue hover:bg-hextech-blue/20 transition-all font-semibold"
+                    >
+                      <Grid className="w-3.5 h-3.5" />
+                      <span>更多...</span>
+                    </button>
                   </div>
+                </div>
+              </div>
+
+              {/* Color Selector Section (WYSIWYG Palette) */}
+              <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-semibold text-slate-300 flex items-center">
+                    <Palette className="w-4 h-4 text-hextech-blue mr-1.5" />
+                    2. 图标主题颜色选择 (所见即所得)
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[11px] text-slate-400">实时图标:</span>
+                    <div className={editingItem.color || "text-hextech-blue"}>
+                      <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Color Swatches Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-36 overflow-y-auto p-1">
+                  {COLOR_PRESETS.map((c) => {
+                    const isSelected = editingItem.color === c.value;
+                    return (
+                      <button
+                        key={c.value}
+                        type="button"
+                        onClick={() => setEditingItem({ ...editingItem, color: c.value })}
+                        className={`p-2 rounded-xl border flex items-center space-x-2 transition-all ${
+                          isSelected
+                            ? "bg-slate-900 border-hextech-blue ring-1 ring-hextech-blue text-white font-bold"
+                            : "bg-slate-900/60 border-white/5 hover:border-white/20 text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        <span
+                          className="w-3.5 h-3.5 rounded-full shrink-0 shadow"
+                          style={{ backgroundColor: c.bg }}
+                        />
+                        <span className="text-xs truncate">{c.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div>
+                  <label className="block text-[11px] text-slate-400 mb-1">自定义 CSS Class (高级)</label>
+                  <input
+                    type="text"
+                    value={editingItem.color || "text-hextech-blue"}
+                    onChange={(e) => setEditingItem({ ...editingItem, color: e.target.value })}
+                    placeholder="如 text-hextech-blue / text-[#ff0055]"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                  />
                 </div>
               </div>
 
@@ -857,6 +1018,79 @@ export default function AdminDashboardPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* FULL ICON PICKER MODAL */}
+      {iconPickerOpen && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[60]">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-3xl space-y-6 max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(10,200,185,0.2)]">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center space-x-2">
+                <Grid className="w-5 h-5 text-hextech-blue" />
+                <h3 className="text-lg font-bold text-white">选择 Lucide 图标</h3>
+                <span className="text-xs text-slate-400">({filteredIcons.length} 款可用)</span>
+              </div>
+              <button
+                onClick={() => setIconPickerOpen(false)}
+                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                value={iconSearchQuery}
+                onChange={(e) => setIconSearchQuery(e.target.value)}
+                placeholder="搜索图标名称 (如 droplet, download, trophy, search, user...)"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm"
+              />
+              <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+            </div>
+
+            {/* Icon Grid */}
+            <div className="flex-1 overflow-y-auto grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 p-1">
+              {filteredIcons.map((iconName) => {
+                const isSelected = editingItem?.icon?.toLowerCase() === iconName.toLowerCase();
+                return (
+                  <button
+                    key={iconName}
+                    type="button"
+                    onClick={() => {
+                      if (editingItem) {
+                        setEditingItem({ ...editingItem, icon: iconName });
+                      }
+                      setIconPickerOpen(false);
+                    }}
+                    className={`p-3 rounded-xl border flex flex-col items-center justify-center space-y-2 transition-all ${
+                      isSelected
+                        ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold shadow-[0_0_15px_rgba(10,200,185,0.3)] scale-105"
+                        : "bg-slate-950/60 border-white/5 hover:border-hextech-blue/50 hover:bg-slate-900 text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    <DynamicIcon name={iconName} className="w-6 h-6 shrink-0" />
+                    <span className="text-[11px] truncate w-full text-center font-mono">
+                      {iconName}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-slate-400">
+              <span>点击图标即可自动选择并关闭弹窗</span>
+              <button
+                type="button"
+                onClick={() => setIconPickerOpen(false)}
+                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-medium"
+              >
+                关闭
+              </button>
+            </div>
           </div>
         </div>
       )}

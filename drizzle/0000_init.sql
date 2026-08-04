@@ -36,7 +36,8 @@ INSERT OR IGNORE INTO `site_settings` (`key`, `value`) VALUES
 ('header_title', 'LOL 中东服玩家社区门户'),
 ('header_subtitle', '汇聚中东服华人群友，一站式开黑工具与数据看板。'),
 ('alert_title', '群友行动指引'),
-('alert_content', '提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。');
+('alert_content', '提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。'),
+('footer_copyright', '© 2026 LOL 中东服华人社区. GLHF.');
 
 -- Seed Sections
 INSERT OR IGNORE INTO `sections` (`id`, `title`, `sort_order`, `full_width`) VALUES

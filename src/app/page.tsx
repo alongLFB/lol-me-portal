@@ -110,6 +110,7 @@ export default function Home() {
   const headerSubtitle = data?.settings?.header_subtitle || "汇聚中东服华人群友，一站式开黑工具与数据看板。";
   const alertTitle = data?.settings?.alert_title || "群友行动指引";
   const alertContent = data?.settings?.alert_content || "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。";
+  const footerCopyright = data?.settings?.footer_copyright || `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`;
 
   const defaultSections: SectionData[] = [
     {
@@ -421,7 +422,7 @@ export default function Home() {
           transition={{ delay: 1, duration: 1 }}
           className="mt-20 pt-8 border-t border-white/10 text-center text-sm text-slate-500 flex items-center justify-between"
         >
-          <p>© {new Date().getFullYear()} LOL 中东服华人社区. GLHF.</p>
+          <p>{footerCopyright}</p>
           <a href="/admin" className="text-xs text-slate-600 hover:text-slate-400 transition-colors">
             管理后台
           </a>
