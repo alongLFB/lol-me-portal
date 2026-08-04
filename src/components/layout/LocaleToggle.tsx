@@ -36,11 +36,10 @@ export function LocaleToggle() {
       disabled={loading}
       title={tNav("language")}
       className="
-        relative flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-semibold
-        bg-white/5 border border-white/10 dark:bg-slate-900/60 dark:border-white/10
-        hover:border-hextech-blue/50 hover:text-hextech-blue hover:bg-hextech-blue/10
-        transition-all duration-300 backdrop-blur-md shadow-md text-slate-200 dark:text-slate-200
-        disabled:opacity-60 cursor-pointer z-30
+        relative flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-bold
+        bg-white border border-slate-200 text-slate-800 hover:border-hextech-blue hover:text-hextech-blue hover:bg-slate-50
+        dark:bg-slate-900/80 dark:border-white/10 dark:text-slate-100 dark:hover:border-hextech-blue/50 dark:hover:text-hextech-blue dark:hover:bg-hextech-blue/10
+        transition-all duration-300 backdrop-blur-md shadow-sm disabled:opacity-60 cursor-pointer z-30
       "
     >
       <Languages className="w-4 h-4 text-hextech-blue shrink-0" />

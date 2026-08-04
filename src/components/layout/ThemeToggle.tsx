@@ -27,9 +27,9 @@ export function ThemeToggle() {
       aria-label="Toggle theme mode"
       className="
         relative w-10 h-10 rounded-2xl flex items-center justify-center
-        bg-white/5 border border-white/10 dark:bg-slate-900/60 dark:border-white/10
-        hover:border-hextech-blue/50 hover:bg-hextech-blue/10
-        transition-all duration-300 group backdrop-blur-md shadow-md cursor-pointer
+        bg-white border border-slate-200 text-slate-800 hover:border-hextech-blue hover:bg-slate-50
+        dark:bg-slate-900/80 dark:border-white/10 dark:text-slate-100 dark:hover:border-hextech-blue/50 dark:hover:bg-hextech-blue/10
+        transition-all duration-300 group backdrop-blur-md shadow-sm cursor-pointer
       "
     >
       {isDark ? (

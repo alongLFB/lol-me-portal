@@ -915,20 +915,20 @@ export default function AdminDashboardPage() {
 
       {/* ITEM MODAL */}
       {itemModalOpen && editingItem && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold text-white">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-white/10 rounded-2xl p-6 w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto shadow-2xl transition-colors">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               {editingItem.id ? tAdmin("items.modal_edit") : tAdmin("items.modal_add")}
             </h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.section_belong")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("items.section_belong")}</label>
                 <select
                   value={editingItem.section_id || ""}
                   onChange={(e) =>
                     setEditingItem({ ...editingItem, section_id: Number(e.target.value) })
                   }
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 >
                   {sectionsList.map((sec) => (
                     <option key={sec.id} value={sec.id}>
@@ -940,13 +940,13 @@ export default function AdminDashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.title_zh")}</label>
+                  <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("items.title_zh")}</label>
                   <input
                     type="text"
                     required
                     value={editingItem.title || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                   />
                 </div>
                 <div>
@@ -959,19 +959,19 @@ export default function AdminDashboardPage() {
                     value={editingItem.title_en || ""}
                     onChange={(e) => setEditingItem({ ...editingItem, title_en: e.target.value })}
                     placeholder="e.g. ME Client Download"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.desc_zh")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("items.desc_zh")}</label>
                 <textarea
                   rows={2}
                   required
                   value={editingItem.desc || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, desc: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
@@ -985,25 +985,25 @@ export default function AdminDashboardPage() {
                   value={editingItem.desc_en || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, desc_en: e.target.value })}
                   placeholder="e.g. Unified Riot launcher for ME server."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.link_url")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("items.link_url")}</label>
                 <input
                   type="url"
                   required
                   value={editingItem.link || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, link: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
               {/* Icon Selector Section */}
-              <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
+              <div className="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-950/60 dark:border-white/10">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-slate-300">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                     {tAdmin("items.icon_section_title")}
                   </label>
                   <button
@@ -1012,9 +1012,9 @@ export default function AdminDashboardPage() {
                       setIconSearchQuery("");
                       setIconPickerOpen(true);
                     }}
-                    className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-white/10 hover:border-hextech-blue/50 transition-all group"
+                    className="flex items-center space-x-2 bg-white hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 hover:border-hextech-blue/50 transition-all group cursor-pointer"
                   >
-                    <span className="text-[11px] text-slate-400 group-hover:text-hextech-blue">{tAdmin("items.open_picker")}</span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400 group-hover:text-hextech-blue">{tAdmin("items.open_picker")}</span>
                     <div className={editingItem.color || "text-hextech-blue"}>
                       <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
                     </div>
@@ -1023,14 +1023,14 @@ export default function AdminDashboardPage() {
 
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <label className="block text-[11px] text-slate-400">{tAdmin("items.icon_label")}</label>
+                    <label className="block text-[11px] text-slate-600 dark:text-slate-400">{tAdmin("items.icon_label")}</label>
                     <button
                       type="button"
                       onClick={() => {
                         setIconSearchQuery("");
                         setIconPickerOpen(true);
                       }}
-                      className="text-[10px] text-hextech-blue hover:underline inline-flex items-center"
+                      className="text-[10px] text-hextech-blue hover:underline inline-flex items-center cursor-pointer"
                     >
                       <Grid className="w-3 h-3 mr-0.5" />
                       {tAdmin("items.open_full_picker")}
@@ -1041,23 +1041,23 @@ export default function AdminDashboardPage() {
                     value={editingItem.icon !== undefined ? editingItem.icon : "ExternalLink"}
                     onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
                     placeholder={tAdmin("items.icon_name_placeholder")}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-white/10 dark:text-white text-sm"
                   />
                 </div>
 
                 {/* Quick Icon Selector Buttons */}
                 <div>
-                  <span className="block text-[11px] text-slate-400 mb-2">{tAdmin("items.popular_icons_label")}</span>
+                  <span className="block text-[11px] text-slate-600 dark:text-slate-400 mb-2">{tAdmin("items.popular_icons_label")}</span>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1">
                     {POPULAR_ICONS.slice(0, 14).map((iconName) => (
                       <button
                         key={iconName}
                         type="button"
                         onClick={() => setEditingItem({ ...editingItem, icon: iconName })}
-                        className={`px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border transition-all ${
+                        className={`px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border transition-all cursor-pointer ${
                           editingItem.icon?.toLowerCase() === iconName.toLowerCase()
                             ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold"
-                            : "bg-slate-900/80 border-white/5 text-slate-400 hover:text-white hover:border-white/20"
+                            : "bg-white border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300 dark:bg-slate-900/80 dark:border-white/5 dark:text-slate-400 dark:hover:text-white dark:hover:border-white/20"
                         }`}
                       >
                         <DynamicIcon name={iconName} className="w-3.5 h-3.5" />
@@ -1070,7 +1070,7 @@ export default function AdminDashboardPage() {
                         setIconSearchQuery("");
                         setIconPickerOpen(true);
                       }}
-                      className="px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border bg-hextech-blue/10 border-hextech-blue/40 text-hextech-blue hover:bg-hextech-blue/20 transition-all font-semibold"
+                      className="px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border bg-hextech-blue/10 border-hextech-blue/40 text-hextech-blue hover:bg-hextech-blue/20 transition-all font-semibold cursor-pointer"
                     >
                       <Grid className="w-3.5 h-3.5" />
                       <span>{tAdmin("items.more_icons")}</span>
@@ -1080,14 +1080,14 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* Color Selector Section (WYSIWYG Palette) */}
-              <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
+              <div className="space-y-3 p-4 rounded-xl bg-slate-50 border border-slate-200 dark:bg-slate-950/60 dark:border-white/10">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-semibold text-slate-300 flex items-center">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center">
                     <Palette className="w-4 h-4 text-hextech-blue mr-1.5" />
                     {tAdmin("items.color_section_title")}
                   </label>
                   <div className="flex items-center space-x-2">
-                    <span className="text-[11px] text-slate-400">{tAdmin("items.live_icon")}</span>
+                    <span className="text-[11px] text-slate-600 dark:text-slate-400">{tAdmin("items.live_icon")}</span>
                     <div className={editingItem.color || "text-hextech-blue"}>
                       <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
                     </div>
@@ -1103,10 +1103,10 @@ export default function AdminDashboardPage() {
                         key={c.value}
                         type="button"
                         onClick={() => setEditingItem({ ...editingItem, color: c.value })}
-                        className={`p-2 rounded-xl border flex items-center space-x-2 transition-all ${
+                        className={`p-2 rounded-xl border flex items-center space-x-2 transition-all cursor-pointer ${
                           isSelected
-                            ? "bg-slate-900 border-hextech-blue ring-1 ring-hextech-blue text-white font-bold"
-                            : "bg-slate-900/60 border-white/5 hover:border-white/20 text-slate-400 hover:text-white"
+                            ? "bg-white border-hextech-blue ring-1 ring-hextech-blue text-slate-900 font-bold dark:bg-slate-900 dark:text-white"
+                            : "bg-white/80 border-slate-200 text-slate-700 hover:border-slate-300 dark:bg-slate-900/60 dark:border-white/5 dark:text-slate-400 dark:hover:text-white"
                         }`}
                       >
                         <span
@@ -1120,26 +1120,26 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">{tAdmin("items.custom_color_label")}</label>
+                  <label className="block text-[11px] text-slate-600 dark:text-slate-400 mb-1">{tAdmin("items.custom_color_label")}</label>
                   <input
                     type="text"
                     value={editingItem.color || "text-hextech-blue"}
                     onChange={(e) => setEditingItem({ ...editingItem, color: e.target.value })}
                     placeholder="如 text-hextech-blue / text-[#ff0055]"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-white/10 dark:text-white text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
                 <input
                   type="number"
                   value={editingItem.sort_order ?? 0}
                   onChange={(e) =>
                     setEditingItem({ ...editingItem, sort_order: Number(e.target.value) })
                   }
-                  className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/10 text-white text-sm"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 dark:bg-slate-950 dark:border-white/10 dark:text-white text-sm"
                 />
               </div>
 
@@ -1151,24 +1151,24 @@ export default function AdminDashboardPage() {
                   onChange={(e) =>
                     setEditingItem({ ...editingItem, featured: e.target.checked })
                   }
-                  className="rounded border-white/10 bg-slate-950 text-hextech-blue focus:ring-0"
+                  className="rounded border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-slate-950 text-hextech-blue focus:ring-0"
                 />
-                <label htmlFor="item_featured" className="text-sm text-slate-300">
+                <label htmlFor="item_featured" className="text-sm text-slate-700 dark:text-slate-300">
                   {tAdmin("items.featured_check")}
                 </label>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4 border-t border-white/10">
+              <div className="flex justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setItemModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-white/5 text-slate-300 text-xs font-medium"
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 text-xs font-medium cursor-pointer"
                 >
                   {tAdmin("sections.cancel")}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-hextech-blue text-slate-950 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl bg-hextech-blue text-slate-950 text-xs font-bold cursor-pointer"
                 >
                   {tAdmin("sections.save")}
                 </button>
@@ -1180,17 +1180,17 @@ export default function AdminDashboardPage() {
 
       {/* FULL ICON PICKER MODAL */}
       {iconPickerOpen && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[60]">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-3xl space-y-6 max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(10,200,185,0.2)]">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md flex items-center justify-center p-4 z-[60]">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-white/10 rounded-2xl p-6 w-full max-w-3xl space-y-6 max-h-[85vh] flex flex-col shadow-2xl transition-colors">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
               <div className="flex items-center space-x-2">
                 <Grid className="w-5 h-5 text-hextech-blue" />
-                <h3 className="text-lg font-bold text-white">{tAdmin("icon_picker.title")}</h3>
-                <span className="text-xs text-slate-400">({filteredIcons.length} {tAdmin("icon_picker.count")})</span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">{tAdmin("icon_picker.title")}</h3>
+                <span className="text-xs text-slate-500 dark:text-slate-400">({filteredIcons.length} {tAdmin("icon_picker.count")})</span>
               </div>
               <button
                 onClick={() => setIconPickerOpen(false)}
-                className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1203,9 +1203,9 @@ export default function AdminDashboardPage() {
                 value={iconSearchQuery}
                 onChange={(e) => setIconSearchQuery(e.target.value)}
                 placeholder={tAdmin("icon_picker.search_placeholder")}
-                className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm"
+                className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-950 dark:border-white/10 dark:text-white dark:placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm shadow-sm"
               />
-              <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-3.5" />
             </div>
 
             {/* Icon Grid */}
@@ -1222,10 +1222,10 @@ export default function AdminDashboardPage() {
                       }
                       setIconPickerOpen(false);
                     }}
-                    className={`p-3 rounded-xl border flex flex-col items-center justify-center space-y-2 transition-all ${
+                    className={`p-3 rounded-xl border flex flex-col items-center justify-center space-y-2 transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold shadow-[0_0_15px_rgba(10,200,185,0.3)] scale-105"
-                        : "bg-slate-950/60 border-white/5 hover:border-hextech-blue/50 hover:bg-slate-900 text-slate-300 hover:text-white"
+                        ? "bg-hextech-blue/20 border-hextech-blue text-hextech-blue font-bold shadow-md scale-105"
+                        : "bg-white border-slate-200 hover:border-hextech-blue/50 hover:bg-slate-50 text-slate-700 hover:text-slate-900 dark:bg-slate-950/60 dark:border-white/5 dark:text-slate-300 dark:hover:text-white"
                     }`}
                   >
                     <DynamicIcon name={iconName} className="w-6 h-6 shrink-0" />
@@ -1237,12 +1237,12 @@ export default function AdminDashboardPage() {
               })}
             </div>
 
-            <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-slate-400">
+            <div className="border-t border-slate-200 dark:border-white/10 pt-4 flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
               <span>{tAdmin("icon_picker.tip")}</span>
               <button
                 type="button"
                 onClick={() => setIconPickerOpen(false)}
-                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-medium"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-medium cursor-pointer"
               >
                 {tAdmin("icon_picker.close")}
               </button>
