@@ -16,8 +16,16 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
+  let timeZone = "UTC";
+  try {
+    timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    timeZone = "UTC";
+  }
+
   return {
     locale,
     messages: messagesMap[locale as "zh" | "en"] || zhMessages,
+    timeZone,
   };
 });
