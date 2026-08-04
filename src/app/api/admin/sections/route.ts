@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import {
   getAllSections,
@@ -22,9 +23,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     const result = await createSection({
       title: body.title,
+      title_en: body.title_en || body.title,
       sort_order: Number(body.sort_order ?? 0),
       full_width: Boolean(body.full_width),
     });
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true, section: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -46,9 +49,11 @@ export async function PUT(req: Request) {
 
     const result = await updateSection(Number(id), {
       ...(data.title !== undefined && { title: data.title }),
+      ...(data.title_en !== undefined && { title_en: data.title_en }),
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
       ...(data.full_width !== undefined && { full_width: Boolean(data.full_width) }),
     });
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true, section: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -70,6 +75,7 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: "缺少板块ID" }, { status: 400 });
 
     await deleteSection(Number(id));
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

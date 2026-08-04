@@ -27,6 +27,8 @@ async function d1Fetch(
     throw new Error("Cloudflare D1 credentials missing (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, CLOUDFLARE_API_TOKEN)");
   }
 
+  const isMutation = /^(insert|update|delete)\b/i.test(sql.trim());
+
   const res = await fetch(D1_API_URL, {
     method: "POST",
     headers: {
@@ -34,7 +36,9 @@ async function d1Fetch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ sql, params }),
-    cache: "no-store",
+    ...(isMutation
+      ? { cache: "no-store" }
+      : { next: { revalidate: 3600, tags: ["d1-db"] } }),
   });
 
   if (!res.ok) {

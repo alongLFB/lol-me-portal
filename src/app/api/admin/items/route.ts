@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import {
   createPortalItem,
@@ -29,7 +30,9 @@ export async function POST(req: Request) {
     const result = await createPortalItem({
       section_id: Number(body.section_id),
       title: body.title,
+      title_en: body.title_en || body.title,
       desc: body.desc,
+      desc_en: body.desc_en || body.desc,
       link: body.link,
       icon: body.icon || "ExternalLink",
       color: body.color || "text-hextech-blue",
@@ -38,6 +41,7 @@ export async function POST(req: Request) {
       featured: Boolean(body.featured),
       sort_order: Number(body.sort_order ?? 0),
     });
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -60,7 +64,9 @@ export async function PUT(req: Request) {
     const result = await updatePortalItem(Number(id), {
       ...(data.section_id !== undefined && { section_id: Number(data.section_id) }),
       ...(data.title !== undefined && { title: data.title }),
+      ...(data.title_en !== undefined && { title_en: data.title_en }),
       ...(data.desc !== undefined && { desc: data.desc }),
+      ...(data.desc_en !== undefined && { desc_en: data.desc_en }),
       ...(data.link !== undefined && { link: data.link }),
       ...(data.icon !== undefined && { icon: data.icon }),
       ...(data.color !== undefined && { color: data.color }),
@@ -69,6 +75,7 @@ export async function PUT(req: Request) {
       ...(data.featured !== undefined && { featured: Boolean(data.featured) }),
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
     });
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -90,6 +97,7 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: "缺少卡片ID" }, { status: 400 });
 
     await deletePortalItem(Number(id));
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

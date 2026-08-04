@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import { getSiteSettings, updateSiteSetting } from "@/lib/db/queries";
 
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
         await updateSiteSetting(key, value);
       }
     }
+    revalidatePath("/[locale]", "page");
     return NextResponse.json({ success: true, message: "设置已更新" });
   } catch (error) {
     return NextResponse.json(
