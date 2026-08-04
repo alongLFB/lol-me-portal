@@ -76,6 +76,7 @@ function DynamicIcon({ name, className }: { name: string; className?: string }) 
 
 export default function Home() {
   const tHome = useTranslations("home");
+  const tNav = useTranslations("nav");
   const locale = useLocale();
 
   const [data, setData] = useState<PortalData | null>(null);
@@ -279,7 +280,7 @@ export default function Home() {
         >
           <p>{footerCopyright}</p>
           <a href={`/${locale}/admin`} className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-600 dark:hover:text-slate-400 transition-colors">
-            {isEn ? 'Admin Portal' : '管理后台'}
+            {tNav("admin")}
           </a>
         </motion.footer>
 

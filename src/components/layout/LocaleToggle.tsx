@@ -1,11 +1,12 @@
 'use client';
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Languages } from "lucide-react";
 import { useState } from "react";
 
 export function LocaleToggle() {
   const locale = useLocale();
+  const tNav = useTranslations("nav");
   const [loading, setLoading] = useState(false);
 
   const targetLocale = locale === "zh" ? "en" : "zh";
@@ -33,7 +34,7 @@ export function LocaleToggle() {
       type="button"
       onClick={handleSwitch}
       disabled={loading}
-      title={locale === "zh" ? "Switch to English" : "切换为中文"}
+      title={tNav("language")}
       className="
         relative flex items-center space-x-2 px-3.5 py-2 rounded-2xl text-xs font-semibold
         bg-white/5 border border-white/10 dark:bg-slate-900/60 dark:border-white/10

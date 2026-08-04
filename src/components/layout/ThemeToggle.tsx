@@ -1,11 +1,13 @@
 'use client';
 
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const tNav = useTranslations("nav");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,13 +23,13 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      title={isDark ? "切换为白昼浅色模式" : "切换为海克斯暗黑夜间模式"}
+      title={isDark ? tNav("theme_light") : tNav("theme_dark")}
       aria-label="Toggle theme mode"
       className="
         relative w-10 h-10 rounded-2xl flex items-center justify-center
         bg-white/5 border border-white/10 dark:bg-slate-900/60 dark:border-white/10
         hover:border-hextech-blue/50 hover:bg-hextech-blue/10
-        transition-all duration-300 group backdrop-blur-md shadow-md
+        transition-all duration-300 group backdrop-blur-md shadow-md cursor-pointer
       "
     >
       {isDark ? (
