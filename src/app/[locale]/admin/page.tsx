@@ -641,13 +641,13 @@ export default function AdminDashboardPage() {
         {activeTab === "sections" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-white">{tAdmin("sections.list_title")}</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{tAdmin("sections.list_title")}</h2>
               <button
                 onClick={() => {
                   setEditingSection({ title: "", title_en: "", sort_order: sectionsList.length, full_width: false });
                   setSectionModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
+                className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center shadow-md cursor-pointer"
               >
                 <Plus className="w-4 h-4 mr-1.5" />
                 {tAdmin("sections.add_btn")}
@@ -658,26 +658,26 @@ export default function AdminDashboardPage() {
               {sectionsList.map((sec) => (
                 <div
                   key={sec.id}
-                  className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex items-center justify-between"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 flex items-center justify-between shadow-sm transition-colors"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center space-x-3">
-                      <span className="font-bold text-white text-base">
+                      <span className="font-bold text-slate-900 dark:text-white text-base">
                         {locale === "en" ? sec.title_en || sec.title : sec.title}
                       </span>
                       {locale === "en" && sec.title && sec.title_en && (
-                        <span className="text-xs text-slate-400 font-mono">({sec.title})</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">({sec.title})</span>
                       )}
                       {locale !== "en" && sec.title_en && (
                         <span className="text-xs text-hextech-blue font-mono">({sec.title_en})</span>
                       )}
                       {sec.full_width && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-500/20 dark:border-amber-500/30">
                           {tAdmin("sections.full_width")}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400">{tAdmin("sections.sort_order")}: {sec.sort_order}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{tAdmin("sections.sort_order")}: {sec.sort_order}</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -686,13 +686,13 @@ export default function AdminDashboardPage() {
                         setEditingSection(sec);
                         setSectionModalOpen(true);
                       }}
-                      className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition-colors"
+                      className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDeleteSection(sec.id)}
-                      className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                      className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -708,7 +708,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-slate-400">{tAdmin("items.select_section")}</span>
+                <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">{tAdmin("items.select_section")}</span>
                 <select
                   value={selectedSectionId || ""}
                   onChange={(e) => {
@@ -716,7 +716,7 @@ export default function AdminDashboardPage() {
                     setSelectedSectionId(id);
                     fetchItems(id);
                   }}
-                  className="px-4 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm focus:outline-none focus:border-hextech-blue"
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-white/10 dark:text-white text-sm focus:outline-none focus:border-hextech-blue shadow-sm"
                 >
                   {sectionsList.map((sec) => (
                     <option key={sec.id} value={sec.id}>
@@ -745,7 +745,7 @@ export default function AdminDashboardPage() {
                   });
                   setItemModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
+                className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center shadow-md cursor-pointer"
               >
                 <Plus className="w-4 h-4 mr-1.5" />
                 {tAdmin("items.add_btn")}
@@ -756,40 +756,40 @@ export default function AdminDashboardPage() {
               {itemsList.map((item) => (
                 <div
                   key={item.id}
-                  className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col justify-between space-y-4"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/80 dark:bg-slate-900/60 dark:border-white/10 flex flex-col justify-between space-y-4 shadow-sm transition-colors"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
-                        <div className={`p-2.5 rounded-xl bg-white/5 border border-white/10 ${item.color} flex items-center justify-center shrink-0`}>
+                        <div className={`p-2.5 rounded-xl bg-slate-100 border border-slate-200 dark:bg-white/5 dark:border-white/10 ${item.color} flex items-center justify-center shrink-0`}>
                           <DynamicIcon name={item.icon} className="w-6 h-6" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-white text-base flex items-center space-x-2">
+                          <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center space-x-2">
                             <span>{locale === "en" ? item.title_en || item.title : item.title}</span>
                             {locale === "en" && item.title && item.title_en && (
-                              <span className="text-xs text-slate-400 font-normal">({item.title})</span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400 font-normal">({item.title})</span>
                             )}
                             {locale !== "en" && item.title_en && (
                               <span className="text-xs text-hextech-blue font-normal">({item.title_en})</span>
                             )}
                           </h3>
-                          <span className="text-[11px] text-slate-400 font-mono">
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                             {tAdmin("items.icon_label")} <code className="text-hextech-blue">{item.icon}</code>
                           </span>
                         </div>
                       </div>
                       {item.featured && (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-hextech-blue/20 text-hextech-blue border border-hextech-blue/30">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-hextech-blue/10 text-hextech-blue border border-hextech-blue/30">
                           {tAdmin("items.featured_tag")}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 mb-1">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">
                       {locale === "en" ? item.desc_en || item.desc : item.desc}
                     </p>
                     {locale === "en" && item.desc && item.desc_en && (
-                      <p className="text-xs text-slate-500 italic mb-3">ZH: {item.desc}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-500 italic mb-3">ZH: {item.desc}</p>
                     )}
                     {locale !== "en" && item.desc_en && (
                       <p className="text-xs text-hextech-blue/80 italic mb-3">EN: {item.desc_en}</p>
@@ -805,7 +805,7 @@ export default function AdminDashboardPage() {
                     </a>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 border-t border-white/5 text-xs text-slate-500">
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-200/80 dark:border-white/5 text-xs text-slate-500 dark:text-slate-400">
                     <span>{tAdmin("items.sort_order")}: {item.sort_order}</span>
                     <div className="flex items-center space-x-2">
                       <button
@@ -813,13 +813,13 @@ export default function AdminDashboardPage() {
                           setEditingItem(item);
                           setItemModalOpen(true);
                         }}
-                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition-colors"
+                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDeleteItem(item.id)}
-                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                        className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
