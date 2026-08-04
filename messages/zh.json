@@ -1,0 +1,103 @@
+{
+  "nav": {
+    "home": "首页",
+    "admin": "管理后台",
+    "theme_light": "切换至白昼浅色模式",
+    "theme_dark": "切换至暗夜海克斯模式",
+    "language": "语言切换"
+  },
+  "home": {
+    "title": "LOL 中东服玩家社区门户",
+    "subtitle": "汇聚中东服华人群友，一站式开黑工具与数据看板。",
+    "alert_title": "群友行动指引",
+    "alert_content": "提醒进群后将群昵称修改为：“游戏ID#后缀 + 段位 + 主玩位置”（例如：Faker#KR1 - 王者 - 中单），方便组队五黑。",
+    "loading": "数据飞速加载中...",
+    "visit_site": "点击访问",
+    "featured": "高亮推荐",
+    "footer_copyright": "© 2026 LOL 中东服华人社区. GLHF."
+  },
+  "admin": {
+    "dashboard_title": "LOL 中东服门户 · 后台管理",
+    "dashboard_subtitle": "中英文多语言配置、板块分类与导航卡片全能控制面板",
+    "preview_site": "预览前台",
+    "logout": "退出登录",
+    "tabs": {
+      "settings": "全站设置 (中英文)",
+      "sections": "板块分类管理",
+      "items": "导航卡片管理"
+    },
+    "settings": {
+      "card_title": "前台 Header 与公告指引设置 (支持中英文)",
+      "header_title": "主标题 (中文 Header Title)",
+      "header_title_en": "主标题 (英文 Header Title EN)",
+      "header_subtitle": "副标题 (中文 Header Subtitle)",
+      "header_subtitle_en": "副标题 (英文 Header Subtitle EN)",
+      "alert_title": "提示框标题 (中文 Alert Title)",
+      "alert_title_en": "提示框标题 (英文 Alert Title EN)",
+      "alert_content": "提示框内容 (中文 Alert Content)",
+      "alert_content_en": "提示框内容 (英文 Alert Content EN)",
+      "footer_copyright": "页脚版权信息 (中文 Footer Copyright)",
+      "footer_copyright_en": "页脚版权信息 (英文 Footer Copyright EN)",
+      "save_btn": "保存全站中英文设置",
+      "save_success": "全站中英文配置保存成功！"
+    },
+    "sections": {
+      "list_title": "导航板块列表",
+      "add_btn": "新增板块",
+      "sort_order": "排序权重",
+      "full_width": "全宽展示",
+      "modal_add": "新增板块分类",
+      "modal_edit": "编辑板块分类",
+      "title_zh": "中文板块标题",
+      "title_en": "英文板块标题 (Title EN)",
+      "sort_hint": "排序权重 (数字越小越靠前)",
+      "cancel": "取消",
+      "save": "保存",
+      "delete_confirm": "确定要删除该板块及其下所有卡片吗？"
+    },
+    "items": {
+      "select_section": "选择分类板块：",
+      "add_btn": "新增卡片",
+      "sort_order": "排序权重",
+      "icon_label": "图标:",
+      "featured_tag": "高亮推荐",
+      "modal_add": "新增导航卡片",
+      "modal_edit": "编辑导航卡片",
+      "section_belong": "所属板块",
+      "title_zh": "中文卡片标题",
+      "title_en": "英文卡片标题 (EN)",
+      "desc_zh": "中文描述文本",
+      "desc_en": "英文描述文本 (Desc EN)",
+      "link_url": "跳转链接 URL",
+      "icon_section_title": "1. Lucide 图标选择与预览",
+      "open_picker": "点击打开图库:",
+      "open_full_picker": "打开全量图标库",
+      "icon_name_placeholder": "输入如 droplet, Download...",
+      "popular_icons_label": "常用图标一键选择：",
+      "more_icons": "更多...",
+      "color_section_title": "2. 图标主题颜色选择 (所见即所得)",
+      "live_icon": "实时图标:",
+      "custom_color_label": "自定义 CSS Class (高级)",
+      "featured_check": "高亮推荐背景 (Featured)",
+      "delete_confirm": "确定要删除该卡片吗？"
+    },
+    "icon_picker": {
+      "title": "选择 Lucide 图标",
+      "count": "款可用",
+      "search_placeholder": "搜索图标名称 (如 droplet, download, trophy, search, user...)",
+      "tip": "点击图标即可自动选择并关闭弹窗",
+      "close": "关闭"
+    }
+  },
+  "login": {
+    "title": "LOL 中东服门户 · 管理后台登录",
+    "subtitle": "请输入密码进入全站配置系统",
+    "password_label": "管理员登录密钥",
+    "password_placeholder": "请输入 ADMIN_PASSWORD...",
+    "submit_btn": "安全验证并登录",
+    "submitting": "安全校验中...",
+    "success": "登录成功！正在跳转...",
+    "attempt_left": "密码错误！还可重试 {count} 次",
+    "locked": "连续 5 次输错密码，该设备/IP 已被临时锁定 15 分钟！"
+  }
+}

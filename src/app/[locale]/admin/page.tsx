@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import * as Icons from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
+import { LocaleToggle } from "@/components/layout/LocaleToggle";
 import {
   LayoutDashboard,
   Settings,
@@ -52,7 +54,6 @@ interface ItemData {
   sort_order: number;
 }
 
-// Extract valid Lucide Icon component names
 const ALL_LUCIDE_ICONS: string[] = Object.keys(Icons).filter((key) => {
   if (key === "Icon" || key.startsWith("Lucide") || key === "default" || key === "createLucideIcon") return false;
   return key[0] === key[0].toUpperCase();
@@ -164,7 +165,10 @@ function DynamicIcon({ name, className }: { name: string; className?: string }) 
 }
 
 export default function AdminDashboardPage() {
+  const tAdmin = useTranslations("admin");
+  const locale = useLocale();
   const router = useRouter();
+
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"settings" | "sections" | "items">("settings");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -210,7 +214,7 @@ export default function AdminDashboardPage() {
       // Auth check
       const authRes = await fetch("/api/auth/me");
       if (!authRes.ok) {
-        router.push("/admin/login");
+        router.push(`/${locale}/admin/login`);
         return;
       }
 
@@ -269,10 +273,9 @@ export default function AdminDashboardPage() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/admin/login");
+    router.push(`/${locale}/admin/login`);
   };
 
-  // Filtered icons for Icon Picker modal
   const filteredIcons = useMemo(() => {
     const query = iconSearchQuery.trim().toLowerCase();
     if (!query) {
@@ -281,7 +284,6 @@ export default function AdminDashboardPage() {
     return ALL_LUCIDE_ICONS.filter((icon) => icon.toLowerCase().includes(query)).slice(0, 150);
   }, [iconSearchQuery]);
 
-  // ─── Settings Handlers ───────────────────────────────────────────────────────
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -291,7 +293,7 @@ export default function AdminDashboardPage() {
         body: JSON.stringify(settings),
       });
       if (res.ok) {
-        showMessage("success", "全站中英文配置保存成功！");
+        showMessage("success", tAdmin("settings.save_success"));
       } else {
         throw new Error("保存失败");
       }
@@ -300,7 +302,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // ─── Section Handlers ────────────────────────────────────────────────────────
   const handleSaveSection = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingSection?.title) return;
@@ -327,7 +328,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteSection = async (id: number) => {
-    if (!confirm("确定要删除该板块及其下所有卡片吗？")) return;
+    if (!confirm(tAdmin("sections.delete_confirm"))) return;
     try {
       const res = await fetch(`/api/admin/sections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -341,7 +342,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // ─── Item Handlers ───────────────────────────────────────────────────────────
   const handleSaveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem?.title || !editingItem.section_id) return;
@@ -367,7 +367,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteItem = async (id: number) => {
-    if (!confirm("确定要删除该卡片吗？")) return;
+    if (!confirm(tAdmin("items.delete_confirm"))) return;
     try {
       const res = await fetch(`/api/admin/items?id=${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -401,27 +401,28 @@ export default function AdminDashboardPage() {
               <LayoutDashboard className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">LOL 中东服门户 · 后台管理</h1>
-              <p className="text-xs text-slate-400">中英文多语言配置、板块与链接全能配置中心</p>
+              <h1 className="text-xl font-bold text-white">{tAdmin("dashboard_title")}</h1>
+              <p className="text-xs text-slate-400">{tAdmin("dashboard_subtitle")}</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
+            <LocaleToggle />
             <ThemeToggle />
             <a
-              href="/"
+              href={`/${locale}`}
               target="_blank"
               className="px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-slate-300 transition-colors inline-flex items-center"
             >
               <Eye className="w-4 h-4 mr-1.5" />
-              预览前台
+              {tAdmin("preview_site")}
             </a>
             <button
               onClick={handleLogout}
               className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-xs font-medium text-red-400 transition-colors inline-flex items-center"
             >
               <LogOut className="w-4 h-4 mr-1.5" />
-              退出登录
+              {tAdmin("logout")}
             </button>
           </div>
         </header>
@@ -455,7 +456,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <Settings className="w-4 h-4 mr-2" />
-            全站设置 (中英文)
+            {tAdmin("tabs.settings")}
           </button>
           <button
             onClick={() => setActiveTab("sections")}
@@ -466,7 +467,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <FolderKanban className="w-4 h-4 mr-2" />
-            板块分类管理 ({sectionsList.length})
+            {tAdmin("tabs.sections")} ({sectionsList.length})
           </button>
           <button
             onClick={() => setActiveTab("items")}
@@ -477,7 +478,7 @@ export default function AdminDashboardPage() {
             }`}
           >
             <Layers className="w-4 h-4 mr-2" />
-            导航卡片管理
+            {tAdmin("tabs.items")}
           </button>
         </div>
 
@@ -486,14 +487,14 @@ export default function AdminDashboardPage() {
           <div className="bg-slate-900/60 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
             <h2 className="text-lg font-bold text-white mb-6 flex items-center">
               <Sparkles className="w-5 h-5 text-hextech-blue mr-2" />
-              前台 Header 与公告指引设置 (支持中英文)
+              {tAdmin("settings.card_title")}
             </h2>
             <form onSubmit={handleSaveSettings} className="space-y-6">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    主标题 (中文 Header Title)
+                    {tAdmin("settings.header_title")}
                   </label>
                   <input
                     type="text"
@@ -505,7 +506,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
                     <Globe className="w-3.5 h-3.5 mr-1" />
-                    主标题 (英文 Header Title EN)
+                    {tAdmin("settings.header_title_en")}
                   </label>
                   <input
                     type="text"
@@ -520,7 +521,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    副标题 (中文 Header Subtitle)
+                    {tAdmin("settings.header_subtitle")}
                   </label>
                   <input
                     type="text"
@@ -532,7 +533,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
                     <Globe className="w-3.5 h-3.5 mr-1" />
-                    副标题 (英文 Header Subtitle EN)
+                    {tAdmin("settings.header_subtitle_en")}
                   </label>
                   <input
                     type="text"
@@ -547,7 +548,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    提示框标题 (中文 Alert Title)
+                    {tAdmin("settings.alert_title")}
                   </label>
                   <input
                     type="text"
@@ -559,7 +560,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
                     <Globe className="w-3.5 h-3.5 mr-1" />
-                    提示框标题 (英文 Alert Title EN)
+                    {tAdmin("settings.alert_title_en")}
                   </label>
                   <input
                     type="text"
@@ -574,7 +575,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    提示框内容 (中文 Alert Content)
+                    {tAdmin("settings.alert_content")}
                   </label>
                   <textarea
                     rows={3}
@@ -586,7 +587,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
                     <Globe className="w-3.5 h-3.5 mr-1" />
-                    提示框内容 (英文 Alert Content EN)
+                    {tAdmin("settings.alert_content_en")}
                   </label>
                   <textarea
                     rows={3}
@@ -601,7 +602,7 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    页脚版权信息 (中文 Footer Copyright)
+                    {tAdmin("settings.footer_copyright")}
                   </label>
                   <input
                     type="text"
@@ -613,7 +614,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs font-semibold text-hextech-blue uppercase tracking-wider mb-2 flex items-center">
                     <Globe className="w-3.5 h-3.5 mr-1" />
-                    页脚版权信息 (英文 Footer Copyright EN)
+                    {tAdmin("settings.footer_copyright_en")}
                   </label>
                   <input
                     type="text"
@@ -630,7 +631,7 @@ export default function AdminDashboardPage() {
                 className="py-3 px-6 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
               >
                 <Save className="w-4 h-4 mr-2" />
-                保存全站中英文设置
+                {tAdmin("settings.save_btn")}
               </button>
             </form>
           </div>
@@ -640,7 +641,7 @@ export default function AdminDashboardPage() {
         {activeTab === "sections" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-lg font-bold text-white">导航板块列表</h2>
+              <h2 className="text-lg font-bold text-white">{tAdmin("sections.list_title")}</h2>
               <button
                 onClick={() => {
                   setEditingSection({ title: "", title_en: "", sort_order: sectionsList.length, full_width: false });
@@ -649,7 +650,7 @@ export default function AdminDashboardPage() {
                 className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
               >
                 <Plus className="w-4 h-4 mr-1.5" />
-                新增板块
+                {tAdmin("sections.add_btn")}
               </button>
             </div>
 
@@ -667,11 +668,11 @@ export default function AdminDashboardPage() {
                       )}
                       {sec.full_width && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          全宽展示
+                          {tAdmin("sections.full_width")}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-slate-400">排序权重: {sec.sort_order}</p>
+                    <p className="text-xs text-slate-400">{tAdmin("sections.sort_order")}: {sec.sort_order}</p>
                   </div>
 
                   <div className="flex items-center space-x-2">
@@ -702,7 +703,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-slate-400">选择分类板块：</span>
+                <span className="text-sm text-slate-400">{tAdmin("items.select_section")}</span>
                 <select
                   value={selectedSectionId || ""}
                   onChange={(e) => {
@@ -742,7 +743,7 @@ export default function AdminDashboardPage() {
                 className="px-4 py-2.5 rounded-xl bg-hextech-blue text-slate-950 font-bold text-sm hover:bg-hextech-blue/90 transition-all inline-flex items-center"
               >
                 <Plus className="w-4 h-4 mr-1.5" />
-                新增卡片
+                {tAdmin("items.add_btn")}
               </button>
             </div>
 
@@ -766,13 +767,13 @@ export default function AdminDashboardPage() {
                             )}
                           </h3>
                           <span className="text-[11px] text-slate-400 font-mono">
-                            图标: <code className="text-hextech-blue">{item.icon}</code>
+                            {tAdmin("items.icon_label")} <code className="text-hextech-blue">{item.icon}</code>
                           </span>
                         </div>
                       </div>
                       {item.featured && (
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-hextech-blue/20 text-hextech-blue border border-hextech-blue/30">
-                          高亮推荐
+                          {tAdmin("items.featured_tag")}
                         </span>
                       )}
                     </div>
@@ -790,7 +791,7 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="flex items-center justify-between pt-3 border-t border-white/5 text-xs text-slate-500">
-                    <span>排序权重: {item.sort_order}</span>
+                    <span>{tAdmin("items.sort_order")}: {item.sort_order}</span>
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => {
@@ -822,11 +823,11 @@ export default function AdminDashboardPage() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-md space-y-6">
             <h3 className="text-lg font-bold text-white">
-              {editingSection.id ? "编辑板块分类" : "新增板块分类"}
+              {editingSection.id ? tAdmin("sections.modal_edit") : tAdmin("sections.modal_add")}
             </h3>
             <form onSubmit={handleSaveSection} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">中文板块标题</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.title_zh")}</label>
                 <input
                   type="text"
                   required
@@ -839,7 +840,7 @@ export default function AdminDashboardPage() {
               <div>
                 <label className="block text-xs text-hextech-blue mb-1 flex items-center">
                   <Globe className="w-3 h-3 mr-1" />
-                  英文板块标题 (Title EN)
+                  {tAdmin("sections.title_en")}
                 </label>
                 <input
                   type="text"
@@ -851,7 +852,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">排序权重 (数字越小越靠前)</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
                 <input
                   type="number"
                   value={editingSection.sort_order ?? 0}
@@ -873,7 +874,7 @@ export default function AdminDashboardPage() {
                   className="rounded border-white/10 bg-slate-950 text-hextech-blue focus:ring-0"
                 />
                 <label htmlFor="full_width" className="text-sm text-slate-300">
-                  全宽网格展示
+                  {tAdmin("sections.full_width")}
                 </label>
               </div>
 
@@ -883,13 +884,13 @@ export default function AdminDashboardPage() {
                   onClick={() => setSectionModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-white/5 text-slate-300 text-xs font-medium"
                 >
-                  取消
+                  {tAdmin("sections.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-hextech-blue text-slate-950 text-xs font-bold"
                 >
-                  保存
+                  {tAdmin("sections.save")}
                 </button>
               </div>
             </form>
@@ -902,11 +903,11 @@ export default function AdminDashboardPage() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg space-y-6 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-bold text-white">
-              {editingItem.id ? "编辑导航卡片" : "新增导航卡片"}
+              {editingItem.id ? tAdmin("items.modal_edit") : tAdmin("items.modal_add")}
             </h3>
             <form onSubmit={handleSaveItem} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1">所属板块</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.section_belong")}</label>
                 <select
                   value={editingItem.section_id || ""}
                   onChange={(e) =>
@@ -924,7 +925,7 @@ export default function AdminDashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-slate-400 mb-1">中文卡片标题</label>
+                  <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.title_zh")}</label>
                   <input
                     type="text"
                     required
@@ -936,7 +937,7 @@ export default function AdminDashboardPage() {
                 <div>
                   <label className="block text-xs text-hextech-blue mb-1 flex items-center">
                     <Globe className="w-3 h-3 mr-1" />
-                    英文卡片标题 (EN)
+                    {tAdmin("items.title_en")}
                   </label>
                   <input
                     type="text"
@@ -949,7 +950,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">中文描述文本</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.desc_zh")}</label>
                 <textarea
                   rows={2}
                   required
@@ -962,7 +963,7 @@ export default function AdminDashboardPage() {
               <div>
                 <label className="block text-xs text-hextech-blue mb-1 flex items-center">
                   <Globe className="w-3 h-3 mr-1" />
-                  英文描述文本 (Desc EN)
+                  {tAdmin("items.desc_en")}
                 </label>
                 <textarea
                   rows={2}
@@ -974,7 +975,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">跳转链接 URL</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("items.link_url")}</label>
                 <input
                   type="url"
                   required
@@ -988,7 +989,7 @@ export default function AdminDashboardPage() {
               <div className="space-y-3 p-4 rounded-xl bg-slate-950/60 border border-white/10">
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-slate-300">
-                    1. Lucide 图标选择与预览
+                    {tAdmin("items.icon_section_title")}
                   </label>
                   <button
                     type="button"
@@ -998,7 +999,7 @@ export default function AdminDashboardPage() {
                     }}
                     className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 px-3 py-1.5 rounded-lg border border-white/10 hover:border-hextech-blue/50 transition-all group"
                   >
-                    <span className="text-[11px] text-slate-400 group-hover:text-hextech-blue">点击打开图库:</span>
+                    <span className="text-[11px] text-slate-400 group-hover:text-hextech-blue">{tAdmin("items.open_picker")}</span>
                     <div className={editingItem.color || "text-hextech-blue"}>
                       <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
                     </div>
@@ -1007,7 +1008,7 @@ export default function AdminDashboardPage() {
 
                 <div>
                   <div className="flex justify-between items-center mb-1">
-                    <label className="block text-[11px] text-slate-400">图标名称</label>
+                    <label className="block text-[11px] text-slate-400">{tAdmin("items.icon_label")}</label>
                     <button
                       type="button"
                       onClick={() => {
@@ -1017,21 +1018,21 @@ export default function AdminDashboardPage() {
                       className="text-[10px] text-hextech-blue hover:underline inline-flex items-center"
                     >
                       <Grid className="w-3 h-3 mr-0.5" />
-                      打开全量图标库
+                      {tAdmin("items.open_full_picker")}
                     </button>
                   </div>
                   <input
                     type="text"
                     value={editingItem.icon !== undefined ? editingItem.icon : "ExternalLink"}
                     onChange={(e) => setEditingItem({ ...editingItem, icon: e.target.value })}
-                    placeholder="输入如 droplet, Download..."
+                    placeholder={tAdmin("items.icon_name_placeholder")}
                     className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-white/10 text-white text-sm"
                   />
                 </div>
 
                 {/* Quick Icon Selector Buttons */}
                 <div>
-                  <span className="block text-[11px] text-slate-400 mb-2">常用图标一键选择：</span>
+                  <span className="block text-[11px] text-slate-400 mb-2">{tAdmin("items.popular_icons_label")}</span>
                   <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto p-1">
                     {POPULAR_ICONS.slice(0, 14).map((iconName) => (
                       <button
@@ -1057,7 +1058,7 @@ export default function AdminDashboardPage() {
                       className="px-2 py-1 rounded-lg text-xs flex items-center space-x-1 border bg-hextech-blue/10 border-hextech-blue/40 text-hextech-blue hover:bg-hextech-blue/20 transition-all font-semibold"
                     >
                       <Grid className="w-3.5 h-3.5" />
-                      <span>更多...</span>
+                      <span>{tAdmin("items.more_icons")}</span>
                     </button>
                   </div>
                 </div>
@@ -1068,10 +1069,10 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-slate-300 flex items-center">
                     <Palette className="w-4 h-4 text-hextech-blue mr-1.5" />
-                    2. 图标主题颜色选择 (所见即所得)
+                    {tAdmin("items.color_section_title")}
                   </label>
                   <div className="flex items-center space-x-2">
-                    <span className="text-[11px] text-slate-400">实时图标:</span>
+                    <span className="text-[11px] text-slate-400">{tAdmin("items.live_icon")}</span>
                     <div className={editingItem.color || "text-hextech-blue"}>
                       <DynamicIcon name={editingItem.icon || "ExternalLink"} className="w-5 h-5" />
                     </div>
@@ -1104,7 +1105,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-slate-400 mb-1">自定义 CSS Class (高级)</label>
+                  <label className="block text-[11px] text-slate-400 mb-1">{tAdmin("items.custom_color_label")}</label>
                   <input
                     type="text"
                     value={editingItem.color || "text-hextech-blue"}
@@ -1116,7 +1117,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1">排序权重 (数字越小越靠前)</label>
+                <label className="block text-xs text-slate-400 mb-1">{tAdmin("sections.sort_hint")}</label>
                 <input
                   type="number"
                   value={editingItem.sort_order ?? 0}
@@ -1138,7 +1139,7 @@ export default function AdminDashboardPage() {
                   className="rounded border-white/10 bg-slate-950 text-hextech-blue focus:ring-0"
                 />
                 <label htmlFor="item_featured" className="text-sm text-slate-300">
-                  高亮推荐背景 (Featured)
+                  {tAdmin("items.featured_check")}
                 </label>
               </div>
 
@@ -1148,13 +1149,13 @@ export default function AdminDashboardPage() {
                   onClick={() => setItemModalOpen(false)}
                   className="px-4 py-2 rounded-xl bg-white/5 text-slate-300 text-xs font-medium"
                 >
-                  取消
+                  {tAdmin("sections.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-hextech-blue text-slate-950 text-xs font-bold"
                 >
-                  保存
+                  {tAdmin("sections.save")}
                 </button>
               </div>
             </form>
@@ -1169,8 +1170,8 @@ export default function AdminDashboardPage() {
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center space-x-2">
                 <Grid className="w-5 h-5 text-hextech-blue" />
-                <h3 className="text-lg font-bold text-white">选择 Lucide 图标</h3>
-                <span className="text-xs text-slate-400">({filteredIcons.length} 款可用)</span>
+                <h3 className="text-lg font-bold text-white">{tAdmin("icon_picker.title")}</h3>
+                <span className="text-xs text-slate-400">({filteredIcons.length} {tAdmin("icon_picker.count")})</span>
               </div>
               <button
                 onClick={() => setIconPickerOpen(false)}
@@ -1186,7 +1187,7 @@ export default function AdminDashboardPage() {
                 type="text"
                 value={iconSearchQuery}
                 onChange={(e) => setIconSearchQuery(e.target.value)}
-                placeholder="搜索图标名称 (如 droplet, download, trophy, search, user...)"
+                placeholder={tAdmin("icon_picker.search_placeholder")}
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-hextech-blue text-sm"
               />
               <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -1222,13 +1223,13 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs text-slate-400">
-              <span>点击图标即可自动选择并关闭弹窗</span>
+              <span>{tAdmin("icon_picker.tip")}</span>
               <button
                 type="button"
                 onClick={() => setIconPickerOpen(false)}
                 className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-medium"
               >
-                关闭
+                {tAdmin("icon_picker.close")}
               </button>
             </div>
           </div>
