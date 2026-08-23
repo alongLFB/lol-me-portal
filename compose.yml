@@ -1,0 +1,19 @@
+services:
+  lol-me-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lol-me-portal:latest
+    container_name: lol-me-portal
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3007}:3007"
+    environment:
+      - PORT=3007
+      - HOSTNAME=0.0.0.0
+      - NODE_ENV=production
+    env_file:
+      - path: .env
+        required: false
+      - path: .env.local
+        required: false

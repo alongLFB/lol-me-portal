@@ -33,7 +33,7 @@
 | **鉴权认证** | JWT (`jose`) + Standard HttpOnly Cookie |
 | **样式与图标** | Tailwind CSS v4 + Lucide React |
 | **动效** | Framer Motion v12 |
-| **部署与 PM2** | GitHub Actions + PM2 Zero-downtime Reload |
+| **容器与部署** | Docker (Multi-stage Standalone) + Docker Compose + GitHub Actions |
 
 ---
 
@@ -102,12 +102,28 @@ npm run build
 
 ## 🚀 生产部署 (Deployment)
 
-推荐使用 GitHub Actions 结合 VPS 服务器自动部署（零停机热重载）：
+推荐使用 GitHub Actions 结合 VPS 服务器自动部署，或直接通过 Docker Compose 部署：
+
+### 1. Docker Compose 手动部署 (VPS)
+
+```bash
+# 启动容器（后台运行，映射端口 3007）
+docker compose up -d --build
+
+# 查看运行状态
+docker compose ps
+
+# 查看实时日志
+docker compose logs -f
+```
+
+### 2. GitHub Actions 自动部署 (CI/CD)
 
 1. 在 GitHub 仓库设置中添加 Secrets：
-   - `SERVER_HOST`: 服务器 IP
-   - `SERVER_USER`: 服务器用户名
+   - `SERVER_HOST`: 服务器 IP (`84.13.128.183`)
+   - `SERVER_USER`: 服务器用户名 (`ubuntu`)
    - `SERVER_SSH_KEY`: 服务器 SSH 私钥
-   - `ENV_FILE`: 服务器使用的全量 `.env.local` 环境变量文件内容
+   - `ENV_FILE`: 服务器使用的全量 `.env` 环境变量内容
 
-2. 推送代码至 `master` 分支，GitHub Actions 将自动执行构建并通过 `pm2 reload` 实现零停机上线。
+2. 推送代码至 `master` 分支，GitHub Actions 将自动连接服务器并通过 `docker compose` 执行容器镜像重构与平滑重启上线。
+
