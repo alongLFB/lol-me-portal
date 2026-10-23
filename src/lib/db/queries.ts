@@ -1,5 +1,5 @@
 import { eq, asc } from "drizzle-orm";
-import { db } from "./client";
+import { db, withNoStore } from "./client";
 import {
   siteSettings,
   sections,
@@ -265,18 +265,21 @@ export async function seedDefaultData() {
 
 // ─── Site Settings Queries ───────────────────────────────────────────────────
 
-export async function getSiteSettings(): Promise<Record<string, string>> {
-  try {
-    const rows = await db.select().from(siteSettings);
-    const settings = { ...DEFAULT_SITE_SETTINGS };
-    for (const row of rows) {
-      settings[row.key] = row.value;
+export async function getSiteSettings(noStore?: boolean): Promise<Record<string, string>> {
+  const queryFn = async () => {
+    try {
+      const rows = await db.select().from(siteSettings);
+      const settings = { ...DEFAULT_SITE_SETTINGS };
+      for (const row of rows) {
+        settings[row.key] = row.value;
+      }
+      return settings;
+    } catch (error) {
+      console.warn("Using default site settings due to D1 query failure:", error);
+      return DEFAULT_SITE_SETTINGS;
     }
-    return settings;
-  } catch (error) {
-    console.warn("Using default site settings due to D1 query failure:", error);
-    return DEFAULT_SITE_SETTINGS;
-  }
+  };
+  return noStore ? withNoStore(queryFn) : queryFn();
 }
 
 export async function updateSiteSetting(key: string, value: string) {
@@ -364,24 +367,26 @@ export async function getPortalData(): Promise<{
 // ─── Section CRUD ─────────────────────────────────────────────────────────────
 
 export async function getAllSections(): Promise<Section[]> {
-  try {
-    let list = await db.select().from(sections).orderBy(asc(sections.sort_order));
-    if (list.length === 0) {
-      await seedDefaultData();
-      list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+  return withNoStore(async () => {
+    try {
+      let list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+      if (list.length === 0) {
+        await seedDefaultData();
+        list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+      }
+      return list;
+    } catch (error) {
+      console.warn("Using fallback empty/default sections due to DB error:", error);
+      return DEFAULT_SECTIONS.map((sec, secIdx) => ({
+        id: secIdx + 1,
+        title: sec.title,
+        title_en: sec.title_en || null,
+        sort_order: sec.sortOrder ?? secIdx,
+        full_width: sec.fullWidth ?? false,
+        created_at: new Date().toISOString(),
+      }));
     }
-    return list;
-  } catch (error) {
-    console.warn("Using fallback empty/default sections due to DB error:", error);
-    return DEFAULT_SECTIONS.map((sec, secIdx) => ({
-      id: secIdx + 1,
-      title: sec.title,
-      title_en: sec.title_en || null,
-      sort_order: sec.sortOrder ?? secIdx,
-      full_width: sec.fullWidth ?? false,
-      created_at: new Date().toISOString(),
-    }));
-  }
+  });
 }
 
 export async function createSection(data: NewSection) {
@@ -399,34 +404,36 @@ export async function deleteSection(id: number) {
 // ─── Item CRUD ────────────────────────────────────────────────────────────────
 
 export async function getItemsBySectionId(sectionId: number): Promise<PortalItem[]> {
-  try {
-    return await db
-      .select()
-      .from(portalItems)
-      .where(eq(portalItems.section_id, sectionId))
-      .orderBy(asc(portalItems.sort_order));
-  } catch (error) {
-    console.warn("Using fallback default items for section due to DB error:", error);
-    const secIndex = sectionId - 1;
-    const secDef = DEFAULT_SECTIONS[secIndex];
-    if (!secDef) return [];
-    return secDef.items.map((item, itemIdx) => ({
-      id: itemIdx + 1,
-      section_id: sectionId,
-      title: item.title,
-      title_en: item.title_en || item.title,
-      desc: item.desc,
-      desc_en: item.desc_en || item.desc,
-      link: item.link,
-      icon: item.icon,
-      color: item.color,
-      border_glow: item.borderGlow,
-      shadow_glow: item.shadowGlow,
-      featured: item.featured ?? false,
-      sort_order: item.sortOrder ?? itemIdx,
-      created_at: new Date().toISOString(),
-    }));
-  }
+  return withNoStore(async () => {
+    try {
+      return await db
+        .select()
+        .from(portalItems)
+        .where(eq(portalItems.section_id, sectionId))
+        .orderBy(asc(portalItems.sort_order));
+    } catch (error) {
+      console.warn("Using fallback default items for section due to DB error:", error);
+      const secIndex = sectionId - 1;
+      const secDef = DEFAULT_SECTIONS[secIndex];
+      if (!secDef) return [];
+      return secDef.items.map((item, itemIdx) => ({
+        id: itemIdx + 1,
+        section_id: sectionId,
+        title: item.title,
+        title_en: item.title_en || item.title,
+        desc: item.desc,
+        desc_en: item.desc_en || item.desc,
+        link: item.link,
+        icon: item.icon,
+        color: item.color,
+        border_glow: item.borderGlow,
+        shadow_glow: item.shadowGlow,
+        featured: item.featured ?? false,
+        sort_order: item.sortOrder ?? itemIdx,
+        created_at: new Date().toISOString(),
+      }));
+    }
+  });
 }
 
 export async function createPortalItem(data: NewPortalItem) {

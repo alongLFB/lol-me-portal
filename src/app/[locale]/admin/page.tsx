@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
       }
 
       // Fetch Settings
-      const settingsRes = await fetch("/api/admin/settings");
+      const settingsRes = await fetch("/api/admin/settings", { cache: "no-store" });
       if (settingsRes.ok) {
         const data = await settingsRes.json();
         const defaultFooter = `© ${new Date().getFullYear()} LOL 中东服华人社区. GLHF.`;
@@ -240,13 +240,15 @@ export default function AdminDashboardPage() {
       }
 
       // Fetch Sections
-      const sectionsRes = await fetch("/api/admin/sections");
+      const sectionsRes = await fetch("/api/admin/sections", { cache: "no-store" });
       if (sectionsRes.ok) {
         const secData: SectionData[] = await sectionsRes.json();
         setSectionsList(secData);
-        if (secData.length > 0 && !selectedSectionId) {
-          setSelectedSectionId(secData[0].id);
-          fetchItems(secData[0].id);
+        if (secData.length > 0) {
+          const currentValid = secData.some((s) => s.id === selectedSectionId);
+          const nextSecId = currentValid && selectedSectionId ? selectedSectionId : secData[0].id;
+          setSelectedSectionId(nextSecId);
+          fetchItems(nextSecId);
         }
       }
     } catch {
@@ -258,7 +260,9 @@ export default function AdminDashboardPage() {
 
   const fetchItems = async (secId: number) => {
     try {
-      const itemsRes = await fetch(`/api/admin/items?sectionId=${secId}`);
+      const itemsRes = await fetch(`/api/admin/items?sectionId=${secId}`, {
+        cache: "no-store",
+      });
       if (itemsRes.ok) {
         const data = await itemsRes.json();
         setItemsList(data);
@@ -350,18 +354,24 @@ export default function AdminDashboardPage() {
 
     try {
       const isEdit = !!editingItem.id;
+      const targetSectionId = Number(editingItem.section_id);
       const res = await fetch("/api/admin/items", {
         method: isEdit ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingItem),
+        body: JSON.stringify({
+          ...editingItem,
+          section_id: targetSectionId,
+        }),
       });
 
       if (res.ok) {
         showMessage("success", tAdmin("item_save_success"));
         setItemModalOpen(false);
-        if (selectedSectionId) fetchItems(selectedSectionId);
+        setSelectedSectionId(targetSectionId);
+        fetchItems(targetSectionId);
       } else {
-        throw new Error(tAdmin("op_failed"));
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || tAdmin("op_failed"));
       }
     } catch (err) {
       showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
@@ -376,7 +386,8 @@ export default function AdminDashboardPage() {
         showMessage("success", tAdmin("item_delete_success"));
         if (selectedSectionId) fetchItems(selectedSectionId);
       } else {
-        throw new Error(tAdmin("op_failed"));
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || tAdmin("op_failed"));
       }
     } catch (err) {
       showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
@@ -472,7 +483,10 @@ export default function AdminDashboardPage() {
             {tAdmin("tabs.sections")} ({sectionsList.length})
           </button>
           <button
-            onClick={() => setActiveTab("items")}
+            onClick={() => {
+              setActiveTab("items");
+              if (selectedSectionId) fetchItems(selectedSectionId);
+            }}
             className={`px-5 py-3 text-sm font-semibold rounded-t-xl transition-all inline-flex items-center border-t border-x cursor-pointer ${
               activeTab === "items"
                 ? "bg-white border-slate-200/80 text-hextech-blue dark:bg-slate-900 dark:border-white/10 font-bold"

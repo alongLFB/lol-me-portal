@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import { getSiteSettings, updateSiteSetting } from "@/lib/db/queries";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
-  const settings = await getSiteSettings();
-  return NextResponse.json(settings);
+  const settings = await getSiteSettings(true);
+  return NextResponse.json(settings, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    },
+  });
 }
 
 export async function POST(req: Request) {
@@ -21,7 +27,9 @@ export async function POST(req: Request) {
         await updateSiteSetting(key, value);
       }
     }
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, message: "设置已更新" });
   } catch (error) {
     return NextResponse.json(

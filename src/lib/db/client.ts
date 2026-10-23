@@ -5,6 +5,7 @@
  */
 
 import { drizzle } from "drizzle-orm/sqlite-proxy";
+import { AsyncLocalStorage } from "node:async_hooks";
 import * as schema from "./schema";
 
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -14,6 +15,12 @@ const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 const D1_API_URL = accountId && databaseId
   ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`
   : null;
+
+export const dbContext = new AsyncLocalStorage<{ noStore?: boolean }>();
+
+export function withNoStore<T>(fn: () => Promise<T>): Promise<T> {
+  return dbContext.run({ noStore: true }, fn);
+}
 
 /**
  * Execute a SQL query against Cloudflare D1 via HTTP API.
@@ -28,6 +35,8 @@ async function d1Fetch(
   }
 
   const isMutation = /^(insert|update|delete)\b/i.test(sql.trim());
+  const context = dbContext.getStore();
+  const useNoStore = isMutation || !!context?.noStore;
 
   const res = await fetch(D1_API_URL, {
     method: "POST",
@@ -36,7 +45,7 @@ async function d1Fetch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ sql, params }),
-    ...(isMutation
+    ...(useNoStore
       ? { cache: "no-store" }
       : { next: { revalidate: 3600, tags: ["d1-db"] } }),
   });

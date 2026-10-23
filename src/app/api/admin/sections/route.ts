@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import {
   getAllSections,
@@ -8,9 +8,15 @@ import {
   deleteSection,
 } from "@/lib/db/queries";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const sectionsList = await getAllSections();
-  return NextResponse.json(sectionsList);
+  return NextResponse.json(sectionsList, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    },
+  });
 }
 
 export async function POST(req: Request) {
@@ -27,7 +33,9 @@ export async function POST(req: Request) {
       sort_order: Number(body.sort_order ?? 0),
       full_width: Boolean(body.full_width),
     });
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, section: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -53,7 +61,9 @@ export async function PUT(req: Request) {
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
       ...(data.full_width !== undefined && { full_width: Boolean(data.full_width) }),
     });
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, section: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -75,7 +85,9 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: "缺少板块ID" }, { status: 400 });
 
     await deleteSection(Number(id));
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

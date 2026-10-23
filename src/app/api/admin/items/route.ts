@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getServerSession } from "@/lib/auth";
 import {
   createPortalItem,
@@ -7,6 +7,8 @@ import {
   deletePortalItem,
   getItemsBySectionId,
 } from "@/lib/db/queries";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -16,7 +18,11 @@ export async function GET(req: Request) {
   }
 
   const items = await getItemsBySectionId(Number(sectionId));
-  return NextResponse.json(items);
+  return NextResponse.json(items, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    },
+  });
 }
 
 export async function POST(req: Request) {
@@ -41,7 +47,9 @@ export async function POST(req: Request) {
       featured: Boolean(body.featured),
       sort_order: Number(body.sort_order ?? 0),
     });
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -75,7 +83,9 @@ export async function PUT(req: Request) {
       ...(data.featured !== undefined && { featured: Boolean(data.featured) }),
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
     });
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
     return NextResponse.json(
@@ -97,7 +107,9 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: "缺少卡片ID" }, { status: 400 });
 
     await deletePortalItem(Number(id));
+    revalidateTag("d1-db", "max");
     revalidatePath("/[locale]", "page");
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
