@@ -368,24 +368,12 @@ export async function getPortalData(): Promise<{
 
 export async function getAllSections(): Promise<Section[]> {
   return withNoStore(async () => {
-    try {
-      let list = await db.select().from(sections).orderBy(asc(sections.sort_order));
-      if (list.length === 0) {
-        await seedDefaultData();
-        list = await db.select().from(sections).orderBy(asc(sections.sort_order));
-      }
-      return list;
-    } catch (error) {
-      console.warn("Using fallback empty/default sections due to DB error:", error);
-      return DEFAULT_SECTIONS.map((sec, secIdx) => ({
-        id: secIdx + 1,
-        title: sec.title,
-        title_en: sec.title_en || null,
-        sort_order: sec.sortOrder ?? secIdx,
-        full_width: sec.fullWidth ?? false,
-        created_at: new Date().toISOString(),
-      }));
+    let list = await db.select().from(sections).orderBy(asc(sections.sort_order));
+    if (list.length === 0) {
+      await seedDefaultData();
+      list = await db.select().from(sections).orderBy(asc(sections.sort_order));
     }
+    return list;
   });
 }
 
@@ -398,41 +386,18 @@ export async function updateSection(id: number, data: Partial<NewSection>) {
 }
 
 export async function deleteSection(id: number) {
-  return db.delete(sections).where(eq(sections.id, id));
+  return db.delete(sections).where(eq(sections.id, id)).returning({ id: sections.id });
 }
 
 // ─── Item CRUD ────────────────────────────────────────────────────────────────
 
 export async function getItemsBySectionId(sectionId: number): Promise<PortalItem[]> {
   return withNoStore(async () => {
-    try {
-      return await db
-        .select()
-        .from(portalItems)
-        .where(eq(portalItems.section_id, sectionId))
-        .orderBy(asc(portalItems.sort_order));
-    } catch (error) {
-      console.warn("Using fallback default items for section due to DB error:", error);
-      const secIndex = sectionId - 1;
-      const secDef = DEFAULT_SECTIONS[secIndex];
-      if (!secDef) return [];
-      return secDef.items.map((item, itemIdx) => ({
-        id: itemIdx + 1,
-        section_id: sectionId,
-        title: item.title,
-        title_en: item.title_en || item.title,
-        desc: item.desc,
-        desc_en: item.desc_en || item.desc,
-        link: item.link,
-        icon: item.icon,
-        color: item.color,
-        border_glow: item.borderGlow,
-        shadow_glow: item.shadowGlow,
-        featured: item.featured ?? false,
-        sort_order: item.sortOrder ?? itemIdx,
-        created_at: new Date().toISOString(),
-      }));
-    }
+    return await db
+      .select()
+      .from(portalItems)
+      .where(eq(portalItems.section_id, sectionId))
+      .orderBy(asc(portalItems.sort_order));
   });
 }
 
@@ -445,5 +410,5 @@ export async function updatePortalItem(id: number, data: Partial<NewPortalItem>)
 }
 
 export async function deletePortalItem(id: number) {
-  return db.delete(portalItems).where(eq(portalItems.id, id));
+  return db.delete(portalItems).where(eq(portalItems.id, id)).returning({ id: portalItems.id });
 }

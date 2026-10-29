@@ -241,18 +241,23 @@ export default function AdminDashboardPage() {
 
       // Fetch Sections
       const sectionsRes = await fetch("/api/admin/sections", { cache: "no-store" });
-      if (sectionsRes.ok) {
-        const secData: SectionData[] = await sectionsRes.json();
-        setSectionsList(secData);
-        if (secData.length > 0) {
-          const currentValid = secData.some((s) => s.id === selectedSectionId);
-          const nextSecId = currentValid && selectedSectionId ? selectedSectionId : secData[0].id;
-          setSelectedSectionId(nextSecId);
-          fetchItems(nextSecId);
-        }
+      if (!sectionsRes.ok) {
+        const errJson = await sectionsRes.json().catch(() => ({}));
+        throw new Error(errJson.error || tAdmin("load_error"));
       }
-    } catch {
-      showMessage("error", tAdmin("load_error"));
+      const secData: SectionData[] = await sectionsRes.json();
+      setSectionsList(secData);
+      if (secData.length > 0) {
+        const currentValid = secData.some((s) => s.id === selectedSectionId);
+        const nextSecId = currentValid && selectedSectionId ? selectedSectionId : secData[0].id;
+        setSelectedSectionId(nextSecId);
+        await fetchItems(nextSecId);
+      } else {
+        setSelectedSectionId(null);
+        setItemsList([]);
+      }
+    } catch (err) {
+      showMessage("error", err instanceof Error ? err.message : tAdmin("load_error"));
     } finally {
       setLoading(false);
     }
@@ -263,12 +268,14 @@ export default function AdminDashboardPage() {
       const itemsRes = await fetch(`/api/admin/items?sectionId=${secId}`, {
         cache: "no-store",
       });
-      if (itemsRes.ok) {
-        const data = await itemsRes.json();
-        setItemsList(data);
+      if (!itemsRes.ok) {
+        const errJson = await itemsRes.json().catch(() => ({}));
+        throw new Error(errJson.error || tAdmin("fetch_items_error"));
       }
-    } catch {
-      showMessage("error", tAdmin("fetch_items_error"));
+      const data = await itemsRes.json();
+      setItemsList(data);
+    } catch (err) {
+      showMessage("error", err instanceof Error ? err.message : tAdmin("fetch_items_error"));
     }
   };
 
@@ -338,10 +345,12 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`/api/admin/sections?id=${id}`, { method: "DELETE" });
       if (res.ok) {
+        setSectionsList((prev) => prev.filter((sec) => sec.id !== id));
         showMessage("success", tAdmin("section_delete_success"));
-        fetchData();
+        await fetchData();
       } else {
-        throw new Error(tAdmin("op_failed"));
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || tAdmin("op_failed"));
       }
     } catch (err) {
       showMessage("error", err instanceof Error ? err.message : tAdmin("op_failed"));
@@ -368,7 +377,7 @@ export default function AdminDashboardPage() {
         showMessage("success", tAdmin("item_save_success"));
         setItemModalOpen(false);
         setSelectedSectionId(targetSectionId);
-        fetchItems(targetSectionId);
+        await fetchItems(targetSectionId);
       } else {
         const errJson = await res.json().catch(() => ({}));
         throw new Error(errJson.error || tAdmin("op_failed"));
@@ -383,8 +392,9 @@ export default function AdminDashboardPage() {
     try {
       const res = await fetch(`/api/admin/items?id=${id}`, { method: "DELETE" });
       if (res.ok) {
+        setItemsList((prev) => prev.filter((item) => item.id !== id));
         showMessage("success", tAdmin("item_delete_success"));
-        if (selectedSectionId) fetchItems(selectedSectionId);
+        if (selectedSectionId) await fetchItems(selectedSectionId);
       } else {
         const errJson = await res.json().catch(() => ({}));
         throw new Error(errJson.error || tAdmin("op_failed"));

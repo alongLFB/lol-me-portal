@@ -27,7 +27,7 @@ export async function POST(req: Request) {
         await updateSiteSetting(key, value);
       }
     }
-    revalidateTag("d1-db", "max");
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, message: "设置已更新" });

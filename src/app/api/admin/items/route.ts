@@ -17,12 +17,19 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "缺少 sectionId" }, { status: 400 });
   }
 
-  const items = await getItemsBySectionId(Number(sectionId));
-  return NextResponse.json(items, {
-    headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-    },
-  });
+  try {
+    const items = await getItemsBySectionId(Number(sectionId));
+    return NextResponse.json(items, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "获取卡片列表失败: " + (error instanceof Error ? error.message : "未知错误") },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: Request) {
@@ -47,7 +54,7 @@ export async function POST(req: Request) {
       featured: Boolean(body.featured),
       sort_order: Number(body.sort_order ?? 0),
     });
-    revalidateTag("d1-db", "max");
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
@@ -83,7 +90,7 @@ export async function PUT(req: Request) {
       ...(data.featured !== undefined && { featured: Boolean(data.featured) }),
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
     });
-    revalidateTag("d1-db", "max");
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
@@ -106,11 +113,17 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "缺少卡片ID" }, { status: 400 });
 
-    await deletePortalItem(Number(id));
-    revalidateTag("d1-db", "max");
+    const deleted = await deletePortalItem(Number(id));
+    if (!deleted || deleted.length === 0) {
+      return NextResponse.json(
+        { error: "未找到该卡片或已被删除（请刷新页面重试）" },
+        { status: 404 }
+      );
+    }
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deletedId: deleted[0].id });
   } catch (error) {
     return NextResponse.json(
       { error: "删除卡片失败: " + (error instanceof Error ? error.message : "未知错误") },

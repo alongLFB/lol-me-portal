@@ -8,9 +8,9 @@ import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as schema from "./schema";
 
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID;
-const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
+const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim();
+const apiToken = process.env.CLOUDFLARE_API_TOKEN?.trim();
 
 const D1_API_URL = accountId && databaseId
   ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`

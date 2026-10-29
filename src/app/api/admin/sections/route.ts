@@ -11,12 +11,19 @@ import {
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const sectionsList = await getAllSections();
-  return NextResponse.json(sectionsList, {
-    headers: {
-      "Cache-Control": "no-store, no-cache, must-revalidate",
-    },
-  });
+  try {
+    const sectionsList = await getAllSections();
+    return NextResponse.json(sectionsList, {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "获取板块列表失败: " + (error instanceof Error ? error.message : "未知错误") },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: Request) {
@@ -33,7 +40,7 @@ export async function POST(req: Request) {
       sort_order: Number(body.sort_order ?? 0),
       full_width: Boolean(body.full_width),
     });
-    revalidateTag("d1-db", "max");
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, section: result[0] });
@@ -61,7 +68,7 @@ export async function PUT(req: Request) {
       ...(data.sort_order !== undefined && { sort_order: Number(data.sort_order) }),
       ...(data.full_width !== undefined && { full_width: Boolean(data.full_width) }),
     });
-    revalidateTag("d1-db", "max");
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, section: result[0] });
@@ -84,11 +91,17 @@ export async function DELETE(req: Request) {
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "缺少板块ID" }, { status: 400 });
 
-    await deleteSection(Number(id));
-    revalidateTag("d1-db", "max");
+    const deleted = await deleteSection(Number(id));
+    if (!deleted || deleted.length === 0) {
+      return NextResponse.json(
+        { error: "未找到该板块或已被删除（请刷新页面重试）" },
+        { status: 404 }
+      );
+    }
+    revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
     revalidatePath("/", "layout");
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, deletedId: deleted[0].id });
   } catch (error) {
     return NextResponse.json(
       { error: "删除板块失败: " + (error instanceof Error ? error.message : "未知错误") },
