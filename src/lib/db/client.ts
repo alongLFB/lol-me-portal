@@ -8,14 +8,6 @@ import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as schema from "./schema";
 
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
-const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim();
-const apiToken = process.env.CLOUDFLARE_API_TOKEN?.trim();
-
-const D1_API_URL = accountId && databaseId
-  ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`
-  : null;
-
 export const dbContext = new AsyncLocalStorage<{ noStore?: boolean }>();
 
 export function withNoStore<T>(fn: () => Promise<T>): Promise<T> {
@@ -30,7 +22,15 @@ async function d1Fetch(
   params: unknown[],
   method: "run" | "all" | "values"
 ): Promise<{ rows: unknown[][] }> {
-  if (!D1_API_URL || !apiToken) {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
+  const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim();
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN?.trim();
+  const d1ApiUrl =
+    accountId && databaseId
+      ? `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${databaseId}/query`
+      : null;
+
+  if (!d1ApiUrl || !apiToken) {
     throw new Error("Cloudflare D1 credentials missing (CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID, CLOUDFLARE_API_TOKEN)");
   }
 
@@ -38,7 +38,7 @@ async function d1Fetch(
   const context = dbContext.getStore();
   const useNoStore = isMutation || !!context?.noStore;
 
-  const res = await fetch(D1_API_URL, {
+  const res = await fetch(d1ApiUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiToken}`,

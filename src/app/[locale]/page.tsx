@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { getTranslations } from "next-intl/server";
 import * as Icons from "lucide-react";
 import { Swords, AlertCircle, ExternalLink } from "lucide-react";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { LocaleToggle } from "@/components/layout/LocaleToggle";
 import { getPortalData } from "@/lib/db/queries";
-
-// ISR: Incremental Static Regeneration (1 Hour Static HTML Cache)
-export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -74,6 +72,7 @@ export default async function Home({
 }: {
   params: Promise<{ locale: string }>;
 }) {
+  await connection();
   const { locale } = await params;
   const isEn = locale === "en";
 

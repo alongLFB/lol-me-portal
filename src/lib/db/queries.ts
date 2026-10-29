@@ -1,4 +1,5 @@
 import { eq, asc } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 import { db, withNoStore } from "./client";
 import {
   siteSettings,
@@ -295,18 +296,8 @@ export async function updateSiteSetting(key: string, value: string) {
 
 // ─── Full Portal Data Queries ────────────────────────────────────────────────
 
-export async function getPortalData(): Promise<{
-  settings: Record<string, string>;
-  sections: {
-    id: number;
-    title: string;
-    title_en?: string | null;
-    full_width: boolean;
-    sort_order: number;
-    items: PortalItem[];
-  }[];
-}> {
-  try {
+async function fetchPortalDataFromDb() {
+  return withNoStore(async () => {
     let allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
 
     if (allSections.length === 0) {
@@ -314,10 +305,15 @@ export async function getPortalData(): Promise<{
       allSections = await db.select().from(sections).orderBy(asc(sections.sort_order));
     }
 
-    const [settingsMap, allItems] = await Promise.all([
-      getSiteSettings(),
+    const [settingRows, allItems] = await Promise.all([
+      db.select().from(siteSettings),
       db.select().from(portalItems).orderBy(asc(portalItems.sort_order)),
     ]);
+
+    const settingsMap = { ...DEFAULT_SITE_SETTINGS };
+    for (const row of settingRows) {
+      settingsMap[row.key] = row.value;
+    }
 
     const itemsBySection = new Map<number, PortalItem[]>();
     for (const item of allItems) {
@@ -333,8 +329,41 @@ export async function getPortalData(): Promise<{
         items: itemsBySection.get(sec.id) || [],
       })),
     };
+  });
+}
+
+const getCachedPortalData = unstable_cache(
+  fetchPortalDataFromDb,
+  ["portal-data"],
+  {
+    tags: ["d1-db"],
+    revalidate: 3600,
+  }
+);
+
+export async function getPortalData(): Promise<{
+  settings: Record<string, string>;
+  sections: {
+    id: number;
+    title: string;
+    title_en?: string | null;
+    full_width: boolean;
+    sort_order: number;
+    items: PortalItem[];
+  }[];
+}> {
+  try {
+    return await getCachedPortalData();
   } catch (error) {
-    console.warn("Using fallback default portal data due to DB error:", error);
+    if (error instanceof Error && error.message.includes("incrementalCache")) {
+      try {
+        return await fetchPortalDataFromDb();
+      } catch (dbErr) {
+        console.warn("Using fallback default portal data due to DB error:", dbErr);
+      }
+    } else {
+      console.warn("Using fallback default portal data due to DB error:", error);
+    }
     return {
       settings: DEFAULT_SITE_SETTINGS,
       sections: DEFAULT_SECTIONS.map((sec, secIdx) => ({

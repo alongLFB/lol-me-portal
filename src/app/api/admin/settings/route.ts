@@ -29,6 +29,8 @@ export async function POST(req: Request) {
     }
     revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
+    revalidatePath("/zh");
+    revalidatePath("/en");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, message: "设置已更新" });
   } catch (error) {

@@ -56,6 +56,8 @@ export async function POST(req: Request) {
     });
     revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
+    revalidatePath("/zh");
+    revalidatePath("/en");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
@@ -92,6 +94,8 @@ export async function PUT(req: Request) {
     });
     revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
+    revalidatePath("/zh");
+    revalidatePath("/en");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, item: result[0] });
   } catch (error) {
@@ -122,6 +126,8 @@ export async function DELETE(req: Request) {
     }
     revalidateTag("d1-db", { expire: 0 });
     revalidatePath("/[locale]", "page");
+    revalidatePath("/zh");
+    revalidatePath("/en");
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, deletedId: deleted[0].id });
   } catch (error) {
